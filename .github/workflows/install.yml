@@ -1,0 +1,35 @@
+# .github/workflows/install.yml
+
+name: Install Dependencies
+
+on:
+    workflow_call:
+        inputs:
+            bun_version:
+                required: true
+                type: string
+
+jobs:
+    setup:
+        runs-on: ubuntu-latest
+        outputs:
+            cache-key: ${{ steps.cache-deps.outputs.cache-key }}
+        steps:
+            - uses: actions/checkout@v4
+            - uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: ${{ inputs.bun_version }}
+
+            # Caching dependencies
+            - name: Cache Bun dependencies
+              id: cache-deps
+              uses: actions/cache@v3
+              with:
+                  path: .bun
+                  key: bun-deps-${{ hashFiles('bun.lockb') }}
+                  restore-keys: |
+                      bun-deps-
+
+            # Install dependencies
+            - name: Install dependencies
+              run: bun install
