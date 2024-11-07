@@ -1,0 +1,18 @@
+{
+    "name": "hexin",
+    "module": "index.ts",
+    "type": "module",
+    "scripts": {
+        "lint": "oxlint && bunx --bun tsc --noEmit",
+        "format:check": "bun prettier . --check",
+        "format": "bun prettier . --write"
+    },
+    "devDependencies": {
+        "@types/bun": "latest",
+        "oxlint": "^0.11.0",
+        "prettier": "3.3.3"
+    },
+    "peerDependencies": {
+        "typescript": "^5.0.0"
+    }
+}
