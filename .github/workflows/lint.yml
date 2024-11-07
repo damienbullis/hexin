@@ -12,21 +12,23 @@ jobs:
         name: Lint Code
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/checkout@v4
+
             # Call the reusable install-dependencies workflow
             - name: Install Dependencies
+              id: setup
               uses: ./.github/workflows/install.yml
               with:
                   bun_version: 'latest' # Specify the Bun version or use "latest"
 
-            - uses: actions/checkout@v4
-            - uses: oven-sh/setup-bun@v2
+            # - uses: oven-sh/setup-bun@v2
 
             # Restore cache using cache-key from install workflow
             - name: Restore Bun cache
               uses: actions/cache@v3
               with:
                   path: .bun
-                  key: ${{ needs.setup.outputs.cache-key }}
+                  key: ${{ steps.setup.outputs.cache-key }}
 
             # Run the lint command
             - run: bun run lint
