@@ -17,7 +17,7 @@ jobs:
             # Call the reusable install-dependencies workflow
             - name: Install Dependencies
               id: setup
-              uses: ./.github/workflows/install.yml
+              uses: ./.github/workflows/install.yml@main
               with:
                   bun_version: 'latest' # Specify the Bun version or use "latest"
 
