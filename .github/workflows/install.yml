@@ -12,8 +12,8 @@ on:
 jobs:
     setup:
         runs-on: ubuntu-latest
-        outputs:
-            cache-key: ${{ steps.cache-deps.outputs.cache-key }}
+        # outputs:
+        #     cache-key: ${{ steps.cache-deps.outputs.cache-key }}
         steps:
             - uses: actions/checkout@v4
             - uses: oven-sh/setup-bun@v2
