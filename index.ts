@@ -1,40 +1,50 @@
-/**
- * Hexin Engine
- *
- * A simple modular game engine, using TypeScript.
- */
-interface System {
-    name: string
-}
-interface OtherSystem extends System {}
-interface AnotherSystem extends System {}
-function Hexin<
-    T extends {
-        [K in keyof T]: T[K] extends System ? T[K] : never
-    },
->(options: T): T {
-    return options
-}
-
-function wrong(): System {
-    return {
-        name: 'wrong',
+function assert<T>(
+    condition: unknown,
+    message: string
+): asserts condition is T {
+    if (!condition) {
+        throw new Error(message)
     }
 }
-class s1 implements System {
-    name = 's1'
+
+interface TestSystem extends Hex.System {
+    __type__: 'test'
 }
-class s2 implements OtherSystem {
-    name = 's2'
-}
-class s3 implements AnotherSystem {
-    name = 's3'
+declare namespace Hex {
+    interface SystemRegistry {}
+    interface ComponentRegistry {}
+    interface Registry {
+        systems: {
+            i: TestSystem
+            // o: System
+        }
+    }
+    interface Component {
+        __type__: string
+    }
+    interface System {
+        __type__: string
+        run(delta: number): void
+    }
+    type Entity = number
 }
 
-const engine = Hexin({
-    system1: new s1(),
-    system2: new s2(),
-    system3: wrong(),
-})
+type SystemKeys = keyof Hex.Registry['systems']
+type GetSystem<K extends SystemKeys = SystemKeys> = Hex.Registry['systems'][K]
 
-console.log('Hello via Bun!')
+function makeEngine() {
+    const systems: Hex.Registry['systems'][SystemKeys][] = []
+    return {
+        systems,
+        getSystem<T extends SystemKeys>(
+            key: T extends infer K ? K : T
+        ): GetSystem<T> {
+            const sys = systems.find((system) => system.__type__ === key)
+            assert<GetSystem<T>>(sys, `System ${key} not found`)
+            return sys
+        },
+    }
+}
+
+const eng = makeEngine()
+const sys = eng.getSystem('i')
