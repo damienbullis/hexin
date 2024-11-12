@@ -13,11 +13,9 @@ interface TestSystem extends Hex.System {
 declare namespace Hex {
     interface SystemRegistry {}
     interface ComponentRegistry {}
+
     interface Registry {
-        systems: {
-            i: TestSystem
-            // o: System
-        }
+        systems: {}
     }
     interface Component {
         __type__: string
@@ -33,12 +31,11 @@ type SystemKeys = keyof Hex.Registry['systems']
 type GetSystem<K extends SystemKeys = SystemKeys> = Hex.Registry['systems'][K]
 
 function makeEngine() {
-    const systems: Hex.Registry['systems'][SystemKeys][] = []
+    const systems: (GetSystem<SystemKeys> | Hex.System)[] = []
+
     return {
         systems,
-        getSystem<T extends SystemKeys>(
-            key: T extends infer K ? K : T
-        ): GetSystem<T> {
+        getSystem<T extends SystemKeys>(key: T): GetSystem<T> {
             const sys = systems.find((system) => system.__type__ === key)
             assert<GetSystem<T>>(sys, `System ${key} not found`)
             return sys
@@ -46,5 +43,6 @@ function makeEngine() {
     }
 }
 
-const eng = makeEngine()
-const sys = eng.getSystem('i')
+const _ = makeEngine()
+
+// const sys = eng.getSystem('')
