@@ -27,7 +27,7 @@ jobs:
 
             - name: Cache Bun Dependencies
               id: cache
-              uses: actions/cache@v2
+              uses: actions/cache@v3
               with:
                   path: ~/.bun
                   key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
@@ -44,7 +44,7 @@ jobs:
 
             - name: Restore Bun Cache
               if: needs.install.outputs.bun_cache == 'true'
-              uses: actions/cache@v2
+              uses: actions/cache@v3
               with:
                   path: ~/.bun
                   key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
@@ -68,7 +68,7 @@ jobs:
 
             - name: Restore Bun Cache
               if: needs.install.outputs.bun_cache == 'true'
-              uses: actions/cache@v2
+              uses: actions/cache@v3
               with:
                   path: ~/.bun
                   key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
@@ -80,4 +80,4 @@ jobs:
               run: bun install
 
             - name: Run Tests
-              run: bun run test
+              run: bun test
