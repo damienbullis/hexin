@@ -1,4 +1,4 @@
-name: Lint & Test
+name: Lint Workflow
 
 on:
     push:
@@ -9,15 +9,47 @@ on:
             - main
 
 jobs:
-    lint:
-        name: Lint Code
+    install:
+        name: Install Dependencies
         runs-on: ubuntu-latest
+        outputs:
+            bun_cache: ${{ steps.cache.outputs.cache-hit }}
         steps:
             - name: Checkout Code
               uses: actions/checkout@v4
 
             - name: Set up Bun
               id: setup-bun
+              uses: oven-sh/setup-bun@v2
+
+            - name: Install Dependencies
+              run: bun install
+
+            - name: Cache Bun Dependencies
+              id: cache
+              uses: actions/cache@v2
+              with:
+                  path: ~/.bun
+                  key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+                  restore-keys: |
+                      ${{ runner.os }}-bun-
+
+    lint:
+        name: Lint Code
+        runs-on: ubuntu-latest
+        needs: install
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+
+            - name: Restore Bun Cache
+              if: needs.install.outputs.bun_cache == 'true'
+              uses: actions/cache@v2
+              with:
+                  path: ~/.bun
+                  key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+
+            - name: Set up Bun
               uses: oven-sh/setup-bun@v2
 
             - name: Install Dependencies
@@ -29,16 +61,23 @@ jobs:
     test:
         name: Run Tests
         runs-on: ubuntu-latest
+        needs: install
         steps:
             - name: Checkout Code
               uses: actions/checkout@v4
 
+            - name: Restore Bun Cache
+              if: needs.install.outputs.bun_cache == 'true'
+              uses: actions/cache@v2
+              with:
+                  path: ~/.bun
+                  key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+
             - name: Set up Bun
-              id: setup-bun
               uses: oven-sh/setup-bun@v2
 
             - name: Install Dependencies
               run: bun install
 
             - name: Run Tests
-              run: bun test
+              run: bun run test
