@@ -48,6 +48,8 @@ jobs:
               with:
                   path: ~/.bun
                   key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+                  restore-keys: |
+                      ${{ runner.os }}-bun-
 
             - name: Set up Bun
               uses: oven-sh/setup-bun@v2
@@ -72,6 +74,8 @@ jobs:
               with:
                   path: ~/.bun
                   key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+                  restore-keys: |
+                      ${{ runner.os }}-bun-
 
             - name: Set up Bun
               uses: oven-sh/setup-bun@v2
