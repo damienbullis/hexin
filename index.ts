@@ -1,48 +1,14 @@
-function assert<T>(
-    condition: unknown,
-    message: string
-): asserts condition is T {
-    if (!condition) {
-        throw new Error(message)
-    }
-}
+import { makeEngine } from './lib'
+import { otherSystem } from './lib/system'
+import { rainbowIntroText } from './lib/utils'
 
-interface TestSystem extends Hex.System {
-    __type__: 'test'
-}
-declare namespace Hex {
-    interface SystemRegistry {}
-    interface ComponentRegistry {}
+console.log(rainbowIntroText())
 
-    interface Registry {
-        systems: {}
-    }
-    interface Component {
-        __type__: string
-    }
-    interface System {
-        __type__: string
-        run(delta: number): void
-    }
-    type Entity = number
-}
+const engine = makeEngine()
+console.log('system1')
+engine.systems.addSystem(['OtherSystem', otherSystem])
 
-type SystemKeys = keyof Hex.Registry['systems']
-type GetSystem<K extends SystemKeys = SystemKeys> = Hex.Registry['systems'][K]
+console.log('Engine started!', engine)
 
-function makeEngine() {
-    const systems: (GetSystem<SystemKeys> | Hex.System)[] = []
-
-    return {
-        systems,
-        getSystem<T extends SystemKeys>(key: T): GetSystem<T> {
-            const sys = systems.find((system) => system.__type__ === key)
-            assert<GetSystem<T>>(sys, `System ${key} not found`)
-            return sys
-        },
-    }
-}
-
-const _ = makeEngine()
-
-// const sys = eng.getSystem('')
+console.log('Finished!')
+// thursday 10am 12pm 4pm
