@@ -1,24 +1,20 @@
 import { makeSystem } from './systems'
 
 export const someSystem = makeSystem({
+    __type: 'SomeSystem',
     run() {},
     newProps: 'hello',
 })
 
 export const otherSystem = makeSystem({
+    __type: 'OtherSystem',
     run() {},
     otherProps: 'world',
 })
 
 declare module './types' {
     interface SystemRegistry {
-        SomeSystem: {
-            run(): void
-            newProps: string
-        }
-        OtherSystem: {
-            run(): void
-            otherProps: string
-        }
+        SomeSystem: typeof someSystem
+        OtherSystem: typeof otherSystem
     }
 }

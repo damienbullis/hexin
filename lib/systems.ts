@@ -1,32 +1,27 @@
-// import type { SystemRegistry } from './core'
-import type {
-    CoreSystemsI,
-    System,
-    SKeys,
-    Engine,
-    SystemRegistry,
-} from './types'
+import type { CoreSystemsI, System, SKeys, Engine, SystemBase } from './types'
 import { assert, assertType } from './utils'
 
-// declare module './core' {
-//     interface SystemRegistry {}
-//     // interface ComponentRegistry {}
-// }
-
-function makeSystem<S extends System, T extends ((e: Engine) => S) | S>(
+function makeSystem<S extends SystemBase, T extends ((e: Engine) => S) | S>(
     system: T
 ) {
     return system
 }
 
 function coreSystems(engine: Engine): CoreSystemsI {
-    const systemsMap: Partial<SystemRegistry> = {}
+    const systemsMap: Partial<Record<SKeys, System>> = {}
     const systems: System[] = []
     // const graph = null // TODO: Implement dependency graph
     return {
-        addSystem([id, system]) {
+        addSystem(system) {
             const sys = typeof system === 'function' ? system(engine) : system
-            assert(!systemsMap[id], `System (${id}) already exists.`)
+            // @ts-expect-error - because we dont have initial systems
+            const id = sys.__type
+            assert(
+                // @ts-expect-error - because we dont have initial systems
+                !systemsMap[id],
+                `System (${id}) already exists.`
+            )
+            // @ts-expect-error - because we dont have initial systems
             systemsMap[id] = sys
             systems.push(sys)
         },

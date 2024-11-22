@@ -42,25 +42,30 @@ export function rainbowIntroText() {
  / __  / /___ /   |_/ // /|  /  
 /_/ /_/_____//_/|_/___/_/ |_/   
 `
+    return smj(hexText, '\n', (line, x) =>
+        smj(line, '', (char, i) => {
+            const divs = line.length / rainbow.length
+            const offset = 3 - x
+            const color =
+                rainbow[
+                    Math.floor((i - offset < 0 ? i : i - offset) / divs) %
+                        rainbow.length
+                ]
+            assert<string>(color, 'Color should exist')
+            return fg(color, char)
+        })
+    )
+}
 
-    return hexText
-        .split('\n')
-        .map((line, x) =>
-            line
-                .split('')
-                .map((char, i) => {
-                    const divs = line.length / rainbow.length
-                    const offset = 3 - x
-                    const color =
-                        rainbow[
-                            Math.floor(
-                                (i - offset < 0 ? i : i - offset) / divs
-                            ) % rainbow.length
-                        ]
-                    assert<string>(color, 'Color should exist')
-                    return fg(color, char)
-                })
-                .join('')
-        )
-        .join('\n')
+type MapFn<T> = Parameters<Array<T>['map']>['0']
+
+/**
+ * ### Split Map Join
+ * @param str The string to split
+ * @param match The string to split/join by
+ * @param map The function to map the split strings
+ * @returns the joined mapped string
+ */
+function smj(str: string, match: string, map: MapFn<string>): string {
+    return str.split(match).map(map).join(match)
 }

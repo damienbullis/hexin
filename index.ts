@@ -1,12 +1,15 @@
 import { makeEngine } from './lib'
-import { otherSystem } from './lib/system'
+import { someSystem, otherSystem } from './lib/system'
 import { rainbowIntroText } from './lib/utils'
 
 console.log(rainbowIntroText())
 
 const engine = makeEngine()
 console.log('system1')
-engine.systems.addSystem(['OtherSystem', otherSystem])
+engine.systems.addSystem(someSystem)
+console.log('system2')
+engine.systems.addSystem(otherSystem)
+const e = engine.systems.getSystem('OtherSystem')
 
 console.log('Engine started!', engine)
 
