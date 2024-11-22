@@ -14,14 +14,14 @@ function coreSystems(engine: Engine): CoreSystemsI {
     return {
         addSystem(system) {
             const sys = typeof system === 'function' ? system(engine) : system
-            // @ts-expect-error - because we dont have initial systems
+            // @ts-ignore - because we dont have initial systems
             const id = sys.__type
             assert(
-                // @ts-expect-error - because we dont have initial systems
+                // @ts-ignore - because we dont have initial systems
                 !systemsMap[id],
                 `System (${id}) already exists.`
             )
-            // @ts-expect-error - because we dont have initial systems
+            // @ts-ignore - because we dont have initial systems
             systemsMap[id] = sys
             systems.push(sys)
         },
