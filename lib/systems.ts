@@ -8,7 +8,7 @@ function makeSystem<S extends SystemBase, T extends ((e: Engine) => S) | S>(
 }
 
 function coreSystems(engine: Engine): CoreSystemsI {
-    const systemsMap: Partial<Record<SKeys, System>> = {}
+    const systemsMap: { [K in SKeys]?: System<K> } = {}
     const systems: System[] = []
     // const graph = null // TODO: Implement dependency graph
     return {
