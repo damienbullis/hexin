@@ -23,10 +23,10 @@ type CKeys = keyof ComponentRegistry
 
 type System<K extends SKeys = SKeys> = SystemRegistry[K]
 
-export interface SystemBase {
+export interface HexSystem {
     run(delta: number): void
 }
-export interface ComponentBase {}
+export interface HexComponent {}
 
 type HexSystems = {
     add<K extends SKeys, S extends { new (e: Hex): System<K> }>(s: S): void
@@ -34,8 +34,11 @@ type HexSystems = {
     all(): System<SKeys>[]
 }
 type HexEntities = {
+    create(): void
+    remove(): void
     add(): void
     get(): void
+    with(): void
 }
 
 type HexinConfig = {
