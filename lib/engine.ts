@@ -1,16 +1,4 @@
-// import { coreSystems } from './systems'
-// import { coreEntities } from './entities'
-
 import { assert, assertType } from './utils'
-
-// class Engine {
-//     systems: ReturnType<typeof coreSystems>
-//     entities: ReturnType<typeof coreEntities>
-//     constructor() {
-//         this.systems = coreSystems(this)
-//         this.entities = coreEntities()
-//     }
-// }
 
 // class OtherSystem implements SystemBase {
 //     constructor(core: Hex) {
@@ -35,10 +23,10 @@ type CKeys = keyof ComponentRegistry
 
 type System<K extends SKeys = SKeys> = SystemRegistry[K]
 
-interface SystemBase {
+export interface SystemBase {
     run(delta: number): void
 }
-interface ComponentBase {}
+export interface ComponentBase {}
 
 type HexSystems = {
     add<K extends SKeys, S extends { new (e: Hex): System<K> }>(s: S): void
@@ -113,7 +101,7 @@ function initSystems(engine: Hex): HexSystems {
     return {
         add(s) {
             engine.utils.log.debug('Adding system: ' + s.name)
-            assert(!(s.name in systemsMap), 'System already exists')
+            assert(!(s.name in systemsMap), 'System should not exist')
 
             const system = new s(engine)
 
@@ -123,6 +111,7 @@ function initSystems(engine: Hex): HexSystems {
         },
         get(key) {
             engine.utils.log.debug('Getting system: ' + key)
+            assert(systemsMap[key], 'System should exist')
             return systemsMap[key]
         },
         all() {
