@@ -25,6 +25,7 @@ export function initSystems(engine: Hex) {
             if (systemMap.has(system._type))
                 throw new Error(`${SystemErrors.EXISTS}: ${system._type}`)
             systemMap.set(system._type, system)
+            systems.push(system)
         },
         /**
          * Get a system from the engine
