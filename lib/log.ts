@@ -1,5 +1,6 @@
 import type { HexinConfig } from './types'
 
+// Log Interfaces
 interface Logger {
     debug(message: string, meta?: Record<string, any>): void
     info(message: string, meta?: Record<string, any>): void
@@ -8,11 +9,15 @@ interface Logger {
     configure(options: LoggerOptions): void
 }
 
-export enum LogLevel {
-    DEBUG = 'debug',
-    INFO = 'info',
-    WARN = 'warn',
-    ERROR = 'error',
+interface LogMessage {
+    level: LogLevel
+    timestamp: string
+    message: string
+    meta?: Record<string, any>
+}
+
+interface LogOutput {
+    write(log: string): void // Defines how logs are written
 }
 
 export interface LoggerOptions {
@@ -22,8 +27,11 @@ export interface LoggerOptions {
     format?: (log: LogMessage) => string // Custom log formatter
 }
 
-interface LogOutput {
-    write(log: string): void // Defines how logs are written
+export enum LogLevel {
+    DEBUG = 'debug',
+    INFO = 'info',
+    WARN = 'warn',
+    ERROR = 'error',
 }
 
 // Log Outputs
@@ -56,13 +64,6 @@ export class MemoryLog implements LogOutput {
     print(): string {
         return this.logs
     }
-}
-
-interface LogMessage {
-    level: LogLevel
-    timestamp: string
-    message: string
-    meta?: Record<string, any>
 }
 
 class Log implements Logger {
