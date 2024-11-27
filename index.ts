@@ -1,6 +1,6 @@
 // import { makeEngine } from './lib'
 // import { someSystem, otherSystem } from './lib/system'
-import { rainbowIntroText } from './lib/utils'
+import { rainbowIntroText } from './utils'
 
 console.log(rainbowIntroText())
 
@@ -14,4 +14,3 @@ console.log(rainbowIntroText())
 // console.log('Engine started!', engine)
 
 console.log('Finished!')
-// thursday 10am 12pm 4pm
