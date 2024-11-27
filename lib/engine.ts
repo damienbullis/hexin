@@ -1,130 +1,31 @@
-import { assert, assertType } from './utils'
+import type { HexinConfig } from './types'
+import { initSystems } from './systems'
+import { initEntities } from './entities'
+import { initUtils } from './utils'
+import { initLog } from './log'
+import { rainbowIntroText } from '../utils'
+import { initEvents } from './events'
 
-// class OtherSystem implements SystemBase {
-//     constructor(core: Hex) {
-//         core.utils.log.debug('Initializing TestSystem')
-//     }
-//     run() {}
-// }
-// class TestSystem implements SystemBase {
-//     constructor(core: Hex) {
-//         core.utils.log.debug('Initializing TestSystem')
-//     }
-//     run() {}
-// }
-interface SystemRegistry {
-    // TestSystem: TestSystem
-    // OtherSystem: OtherSystem
-}
+type HexUtils = ReturnType<typeof initUtils>
+type HexLog = ReturnType<typeof initLog>
+type HexSystems = ReturnType<typeof initSystems>
+type HexEntities = ReturnType<typeof initEntities>
+type HexEvents = ReturnType<typeof initEvents>
 
-type SKeys = keyof SystemRegistry
-interface ComponentRegistry {}
-type CKeys = keyof ComponentRegistry
-
-type System<K extends SKeys = SKeys> = SystemRegistry[K]
-
-export interface HexSystem {
-    run(delta: number): void
-}
-export interface HexComponent {}
-
-type HexSystems = {
-    add<K extends SKeys, S extends { new (e: Hex): System<K> }>(s: S): void
-    get<K extends SKeys>(key: K): System<K>
-    all(): System<SKeys>[]
-}
-type HexEntities = {
-    create(): void
-    remove(): void
-    add(): void
-    get(): void
-    with(): void
-}
-
-type HexinConfig = {
-    log_level: 0 | 1 | 2 | 3
-    rng_seed: number
-}
-
-function initLogger(config: Partial<HexinConfig>) {
-    const no_op = (_: string) => {}
-    const TODO = (msg: string) => console.error('Not implemented yet.', msg)
-    const logger = {
-        debug: TODO,
-        info: TODO,
-        warn: TODO,
-        error: TODO,
-        fatal: TODO,
-    }
-    const log_level = config.log_level || 0
-    switch (log_level) {
-        case 1:
-            logger.debug = no_op
-            break
-        case 2:
-            logger.debug = no_op
-            logger.info = no_op
-            break
-        case 3:
-            logger.debug = no_op
-            logger.info = no_op
-            logger.warn = no_op
-            break
-    }
-    return logger
-}
-
-function initUtils(config: Partial<HexinConfig>) {
-    const utils = {
-        config,
-        log: initLogger(config),
-    }
-    utils.log.debug('Initializing utils')
-    utils.log.debug('Config: ' + config)
-    return utils
-}
-
-const INIT_CONFIG: HexinConfig = {
-    log_level: 0,
-    rng_seed: 0,
-}
 class Hex {
-    utils: ReturnType<typeof initUtils>
-    systems = initSystems(this)
-    entities = initEntities(this)
-    constructor(config: Partial<HexinConfig> = INIT_CONFIG) {
-        this.utils = initUtils(config)
+    log: HexLog
+    utils: HexUtils
+    events: HexEvents
+    systems: HexSystems
+    entities: HexEntities
+    constructor(config: Partial<HexinConfig> = {}) {
+        this.log = initLog(config)
+        this.log.info(rainbowIntroText())
+        this.utils = initUtils(this, config)
+        this.events = initEvents(this)
+        this.systems = initSystems(this)
+        this.entities = initEntities(this)
     }
-}
-
-function initSystems(engine: Hex): HexSystems {
-    // @ts-ignore
-    const systemsMap: Record<SKeys, System> = {}
-    const systems: System[] = []
-    return {
-        add(s) {
-            engine.utils.log.debug('Adding system: ' + s.name)
-            assert(!(s.name in systemsMap), 'System should not exist')
-
-            const system = new s(engine)
-
-            assertType<SKeys>(s.name)
-            systemsMap[s.name] = system
-            systems.push(system)
-        },
-        get(key) {
-            engine.utils.log.debug('Getting system: ' + key)
-            assert(systemsMap[key], 'System should exist')
-            return systemsMap[key]
-        },
-        all() {
-            engine.utils.log.debug('Getting all systems')
-            return systems
-        },
-    }
-}
-function initEntities(engine: Hex): HexEntities {
-    return {} as HexEntities
 }
 
 export { Hex }
