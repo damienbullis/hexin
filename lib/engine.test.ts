@@ -13,13 +13,13 @@ describe('core', () => {
     it('should initialize with a config', () => {
         const mem = new MemoryLog()
         const log_options: LoggerOptions = {
-            level: LogLevel.DEBUG,
+            level: LogLevel.INFO,
             outputs: [mem],
         }
         const hex = new Hex({ log_options })
         const options = hex.utils.config.log_options
 
-        expect(options?.level).toBe(LogLevel.DEBUG)
+        expect(options?.level).toBe(LogLevel.INFO)
         expect(options?.outputs).toHaveLength(1)
         expect(mem.print().length).toBeGreaterThan(0)
     })
