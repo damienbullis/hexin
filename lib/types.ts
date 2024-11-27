@@ -5,11 +5,11 @@ export interface SystemBase {
     _type: string
     run(delta: number): void
 }
-interface NullSystem extends SystemBase {
-    type: '__null'
-}
+// interface NullSystem extends SystemBase {
+//     type: '__null'
+// }
 export interface SystemRegistry {
-    __null: NullSystem
+    // __null: NullSystem
 }
 export type SKeys = keyof SystemRegistry
 export type Systems = SystemRegistry[SKeys]
