@@ -6,27 +6,30 @@ export interface SystemBase {
     run(delta: number): void
 }
 // interface NullSystem extends SystemBase {
-//     type: '__null'
+//     type: 'TestSystem'
 // }
 export interface SystemRegistry {
-    // __null: NullSystem
+    // TestSystem: NullSystem
 }
 export type SKeys = keyof SystemRegistry
-export type Systems = SystemRegistry[SKeys]
+type Systems = SystemRegistry[SKeys]
 export type System<
+    // K extends SKeys = SKeys, T extends Systems = Systems> =
+    //     T extends PickSystem<K> ? T : SystemBase
     K extends SKeys = SKeys,
-    T extends SystemBase = SystemBase,
+    T extends Systems = Systems,
 > = T extends SystemRegistry[K] ? T : SystemBase
 
 // Component Types
-export interface ComponentBase {}
+export interface ComponentBase {
+    _type: CKeys
+}
 export interface ComponentRegistry {}
 export type CKeys = keyof ComponentRegistry
-export type Component<T extends ComponentBase = ComponentBase> = T extends {
-    _type: infer U extends CKeys
-}
-    ? ComponentRegistry[U]
-    : ComponentBase
+export type Component<
+    K extends CKeys = CKeys,
+    T extends ComponentBase = ComponentBase,
+> = T extends ComponentRegistry[K] ? T : ComponentBase
 
 // Additional Types
 export type HexinConfig = {

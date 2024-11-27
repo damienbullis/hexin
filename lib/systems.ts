@@ -1,5 +1,5 @@
 import type { Hex } from './engine'
-import type { SKeys, System } from './types'
+import type { SKeys, System, SystemBase } from './types'
 
 enum SystemErrors {
     NOT_FOUND = 'System not found',
@@ -13,14 +13,14 @@ enum SystemErrors {
  * @returns Systems API
  */
 export function initSystems(engine: Hex) {
-    const systemMap = new Map<string, System>()
-    const systems: System[] = []
+    const systemMap = new Map<string, SystemBase>()
+    const systems: SystemBase[] = []
     // const depGraph = []
     return {
         /**
          * Add a system to the engine
          */
-        add<T extends System>(s: { new (e: Hex): T }) {
+        add<T extends SystemBase>(s: { new (e: Hex): T }): void {
             const system = new s(engine)
             if (systemMap.has(system._type))
                 throw new Error(`${SystemErrors.EXISTS}: ${system._type}`)
@@ -43,9 +43,9 @@ export function initSystems(engine: Hex) {
     }
 }
 
-function assertSystem<K extends SKeys>(
-    system: System,
+function assertSystem<K extends SKeys, T extends System<K>>(
+    system: SystemBase,
     type: K
-): asserts system is System<K> {
+): asserts system is T {
     if (system._type !== type) throw new Error(SystemErrors.TYPE_MISMATCH)
 }

@@ -4,13 +4,23 @@ import { beforeEach, describe, expect, it } from 'bun:test'
 import type { System } from './types'
 import { LogLevel, MemoryLog } from './log'
 
+// @ts-expect-error - test system
+class TestSystem implements System {
+    _type = 'TestSystem' as const
+    run() {}
+}
+
+// To check if the types are working correctly uncomment the following:
+// declare module './types' {
+//     interface SystemRegistry {
+//         TestSystem: TestSystem
+//     }
+// }
+
+// After uncommenting the above,
+// you should see each @ts-expect-error show an lsp error
 describe('Core Systems', () => {
     let hex: Hex
-
-    class TestSystem implements System {
-        _type = 'TestSystem'
-        run() {}
-    }
 
     beforeEach(() => {
         // configure hex with memory log for testing
@@ -32,16 +42,17 @@ describe('Core Systems', () => {
         const systems = initSystems(hex)
         systems.add(TestSystem)
 
-        // @ts-expect-error
+        // @ts-expect-error - no systems registered
         const system = systems.get('TestSystem')
-
         expect(system).toBeInstanceOf(TestSystem)
+
+        // @ts-expect-error - no systems registered
         expect(system._type).toBe('TestSystem')
     })
     it('should throw when system not found', () => {
         const systems = initSystems(hex)
 
-        // @ts-expect-error
+        // @ts-expect-error - no systems registered
         expect(() => systems.get('TestSystem')).toThrow()
     })
     it('should throw when adding a duplicate system', () => {
