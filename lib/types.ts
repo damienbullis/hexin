@@ -5,13 +5,18 @@ export interface SystemBase {
     _type: string
     run(delta: number): void
 }
-export interface SystemRegistry {}
-export type SKeys = keyof SystemRegistry
-export type System<T extends SystemBase = SystemBase> = T extends {
-    _type: infer U extends SKeys
+interface NullSystem extends SystemBase {
+    type: '__null'
 }
-    ? SystemRegistry[U]
-    : SystemBase
+export interface SystemRegistry {
+    __null: NullSystem
+}
+export type SKeys = keyof SystemRegistry
+export type Systems = SystemRegistry[SKeys]
+export type System<
+    K extends SKeys = SKeys,
+    T extends SystemBase = SystemBase,
+> = T extends SystemRegistry[K] ? T : SystemBase
 
 // Component Types
 export interface ComponentBase {}

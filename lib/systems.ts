@@ -1,6 +1,12 @@
 import type { Hex } from './engine'
 import type { SKeys, System } from './types'
 
+enum SystemErrors {
+    NOT_FOUND = 'System not found',
+    TYPE_MISMATCH = 'System type mismatch',
+    EXISTS = 'System already exists',
+}
+
 /**
  * Initialize Hex Systems
  * @param engine
@@ -17,10 +23,7 @@ export function initSystems(engine: Hex) {
         add<T extends System>(s: { new (e: Hex): T }) {
             const system = new s(engine)
             if (systemMap.has(system._type))
-                throw new Error(
-                    `System with type ${system._type} already exists`
-                )
-
+                throw new Error(`${SystemErrors.EXISTS}: ${system._type}`)
             systemMap.set(system._type, system)
         },
         /**
@@ -28,12 +31,20 @@ export function initSystems(engine: Hex) {
          */
         get<K extends SKeys>(type: K): System<K> {
             const system = systemMap.get(type)
-            if (!system) throw new Error(`System with type ${type} not found`)
-            if (system._type !== type) throw new Error(`System type mismatch`)
-            return system as System<K>
+            if (!system) throw new Error(`${SystemErrors.NOT_FOUND}: ${type}`)
+
+            assertSystem(system, type)
+            return system
         },
         all() {
             return systems
         },
     }
+}
+
+function assertSystem<K extends SKeys>(
+    system: System,
+    type: K
+): asserts system is System<K> {
+    if (system._type !== type) throw new Error(SystemErrors.TYPE_MISMATCH)
 }
