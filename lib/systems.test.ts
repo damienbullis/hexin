@@ -2,7 +2,8 @@ import { Hex } from './engine'
 import { initSystems } from './systems'
 import { beforeEach, describe, expect, it } from 'bun:test'
 import type { System } from './types'
-import { LogLevel, MemoryLog } from './log'
+import { LogLevel } from './log'
+import { MemoryLog } from './log/writers'
 
 // @ts-expect-error - test system
 class TestSystem implements System {
