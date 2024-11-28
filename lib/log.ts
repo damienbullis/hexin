@@ -16,15 +16,20 @@ interface LogMessage {
     meta?: Record<string, any>
 }
 
-interface LogOutput {
+interface LogWriter {
     write(log: string): void // Defines how logs are written
 }
 
+type LogTimestamp = () => string
+type LogFormatter = (log: LogMessage) => string
+
 export interface LoggerOptions {
     level: LogLevel // Minimum log level to output
-    outputs: LogOutput[] // List of log output handlers
-    timestampProvider?: () => string // Custom timestamp generator
-    format?: (log: LogMessage) => string // Custom log formatter
+    outputs: {
+        output: LogWriter // List of log output handlers
+        timestamp?: LogTimestamp // Function to generate timestamps
+        formatter?: LogFormatter // Function to format log messages
+    }[]
 }
 
 export enum LogLevel {
@@ -35,19 +40,19 @@ export enum LogLevel {
 }
 
 // Log Outputs
-export class ConsoleLog implements LogOutput {
+export class ConsoleLog implements LogWriter {
     write(log: string): void {
         console.log(log)
     }
 }
-export class FileLog implements LogOutput {
+export class FileLog implements LogWriter {
     constructor(private path: string) {}
     write(log: string): void {
         // Write to file
         throw new Error('Method not implemented.')
     }
 }
-export class NetworkLog implements LogOutput {
+export class NetworkLog implements LogWriter {
     constructor(private url: string) {}
     write(log: string): void {
         // Send to network
@@ -56,7 +61,7 @@ export class NetworkLog implements LogOutput {
 }
 
 // MemoryOutput will modify the logs string passed in.
-export class MemoryLog implements LogOutput {
+export class MemoryLog implements LogWriter {
     constructor(private logs: string = '') {}
     write(log: string): void {
         this.logs += log + '\n'
@@ -75,17 +80,22 @@ class Log implements Logger {
         meta: Record<string, any> = {}
     ): void {
         if (this.shouldLog(level)) {
-            const timestamp = this.options.timestampProvider
-                ? this.options.timestampProvider()
-                : new Date().toISOString()
+            for (const opt of this.options.outputs) {
+                const timestamp = opt.timestamp
+                    ? opt.timestamp()
+                    : new Date().toISOString()
 
-            const logMessage: LogMessage = { level, timestamp, message, meta }
-            const formatted = this.options.format
-                ? this.options.format(logMessage)
-                : JSON.stringify(logMessage)
+                const logMessage: LogMessage = {
+                    level,
+                    timestamp,
+                    message,
+                    meta,
+                }
+                const formatted = opt.formatter
+                    ? opt.formatter(logMessage)
+                    : JSON.stringify(logMessage)
 
-            for (const output of this.options.outputs) {
-                output.write(formatted)
+                opt.output.write(formatted)
             }
         }
     }
@@ -121,9 +131,19 @@ class Log implements Logger {
     }
 }
 
+const defaultOutput = makeLogOutput({
+    output: { write: (log: string) => void console.log(log) },
+    timestamp: () => 'time',
+    formatter: (log: LogMessage) => {
+        return `${log.timestamp} [${log.level}] ${log.message} ${JSON.stringify(
+            log.meta
+        )}`
+    },
+})
+
 const defaultOptions: LoggerOptions = {
     level: LogLevel.DEBUG,
-    outputs: [new ConsoleLog()],
+    outputs: [defaultOutput],
 }
 
 export function initLog(config: Partial<HexinConfig> = {}): Logger {
@@ -131,4 +151,9 @@ export function initLog(config: Partial<HexinConfig> = {}): Logger {
         config.log_options = defaultOptions
     }
     return new Log(config.log_options)
+}
+
+type LoggerOutput = LoggerOptions['outputs'][number]
+export function makeLogOutput(output: LoggerOutput) {
+    return output
 }

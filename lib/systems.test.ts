@@ -25,7 +25,10 @@ describe('Core Systems', () => {
     beforeEach(() => {
         // configure hex with memory log for testing
         hex = new Hex({
-            log_options: { level: LogLevel.DEBUG, outputs: [new MemoryLog()] },
+            log_options: {
+                level: LogLevel.DEBUG,
+                outputs: [{ output: new MemoryLog() }],
+            },
         })
     })
     it('should initialize with no systems', () => {
