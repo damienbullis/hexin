@@ -1,6 +1,7 @@
 import type { Hex } from './engine'
 import type { SKeys, System, SystemBase } from './types'
 
+// Do I like these?
 enum SystemErrors {
     NOT_FOUND = 'System not found',
     TYPE_MISMATCH = 'System type mismatch',
@@ -30,9 +31,14 @@ export function initSystems(engine: Hex) {
         /**
          * Get a system from the engine
          */
-        get<K extends SKeys>(type: K): System<K> {
+        get<K extends SKeys>(type: K, dep?: SystemBase): System<K> {
             const system = systemMap.get(type)
             if (!system) throw new Error(`${SystemErrors.NOT_FOUND}: ${type}`)
+            if (dep) {
+                throw new Error(
+                    'Not implemented - Add this component to ' + dep._type
+                )
+            }
 
             assertSystem(system, type)
             return system
