@@ -13,7 +13,7 @@ interface LogMessage {
     level: LogLevel
     timestamp: string
     message: string
-    meta?: Record<string, any>
+    meta: Record<string, any> | undefined
 }
 
 export interface LogWriter {
@@ -46,7 +46,7 @@ class Log implements Logger {
     private log(
         level: LogLevel,
         message: string,
-        meta: Record<string, any> = {}
+        meta?: Record<string, any>
     ): void {
         if (this.shouldLog(level)) {
             for (const opt of this.options.outputs) {
@@ -101,13 +101,7 @@ class Log implements Logger {
 }
 
 const defaultOutput = makeLogOutput({
-    output: { write: (log: string) => void console.log(log) },
-    timestamp: () => 'time',
-    formatter: (log: LogMessage) => {
-        return `${log.timestamp} [${log.level}] ${log.message} ${JSON.stringify(
-            log.meta
-        )}`
-    },
+    output: { write: console.log },
 })
 
 const defaultOptions: LoggerOptions = {

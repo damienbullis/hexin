@@ -1,8 +1,11 @@
 import { describe, it, expect } from 'bun:test'
-// import { Hex } from './engine'
+import { Hex } from './engine'
+import { LogLevel } from './log'
 
 describe('Core Engine', () => {
-    it('example', () => {
-        expect(1).toBe(1)
+    it('initializing with no config', () => {
+        const hex = new Hex()
+        expect(hex).toBeDefined()
+        expect(hex.utils.config.log_options?.level).toBe(LogLevel.DEBUG)
     })
 })
