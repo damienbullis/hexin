@@ -1,9 +1,9 @@
 import { Hex } from './engine'
 import { initSystems } from './systems'
 import { beforeEach, describe, expect, it } from 'bun:test'
-import type { System } from './types'
-import { LogLevel } from './log'
-import { MemoryLog } from './log/writers'
+import type { System, SystemBase } from './types'
+import { LogLevel } from './utils/log'
+import { MemoryLog } from './utils/log/writers'
 
 // @ts-expect-error - test system
 class TestSystem implements System {
@@ -64,5 +64,23 @@ describe('Core Systems', () => {
         systems.add(TestSystem)
 
         expect(() => systems.add(TestSystem)).toThrow()
+    })
+
+    it('should add a system with dependencies', () => {
+        const systems = initSystems(hex)
+        class DepSystem implements SystemBase {
+            _type = 'DepSystem' as const
+            run() {}
+        }
+        class DependentSystem implements SystemBase {
+            _type = 'DependentSystem' as const
+            run() {}
+        }
+        systems.add(DependentSystem)
+        systems.add(DepSystem)
+        // @ts-expect-error - no systems registered
+        systems.use('DepSystem', 'DependentSystem')
+
+        expect(systems.all()).toHaveLength(2)
     })
 })
