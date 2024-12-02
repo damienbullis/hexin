@@ -26,7 +26,7 @@ export function initSystems<S extends SystemBase = SystemBase>(engine: Hex) {
         if (!graph.has(dep))
             throw new Error(`${SystemErrors.NOT_FOUND}: ${dep}`)
         graph.get(system)!.push(dep)
-        if (hasCycle(system)) throw new Error(SystemErrors.CYCLE)
+        if (hasCycle(system)) throw new Error(SystemErrors.CYCLE) // Is this where I should check for cycles?
         isDirty = true
     }
     const getDeps = (system: S): S[] => {
