@@ -1,5 +1,5 @@
 import { initLog } from './log'
-import type { HexinConfig } from './types'
+import type { HexinConfig } from '../types'
 
 export function initUtils(config: Partial<HexinConfig>) {
     const log = initLog(config)

@@ -1,4 +1,4 @@
-import type { LoggerOptions } from './log'
+import type { LoggerOptions } from './utils/log'
 
 // System Types
 export interface SystemBase {

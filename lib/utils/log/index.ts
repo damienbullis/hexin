@@ -1,4 +1,4 @@
-import type { HexinConfig } from '../types'
+import type { HexinConfig } from '../../types'
 
 // Log Interfaces
 interface Logger {

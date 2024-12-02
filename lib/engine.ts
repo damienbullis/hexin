@@ -3,14 +3,13 @@ import type { HexinConfig } from './types'
 import { initSystems } from './systems'
 // import { initEvents } from './events'
 import { initUtils } from './utils'
-import { initLog } from './log'
 // import { rainbowIntroText } from '../utils'
 
 // type HexEntities = ReturnType<typeof initEntities>
 type HexSystems = ReturnType<typeof initSystems>
 // type HexEvents = ReturnType<typeof initEvents>
 // type HexUtils = ReturnType<typeof initUtils>
-type HexLog = ReturnType<typeof initLog>
+type HexLog = ReturnType<typeof initUtils>['log']
 
 class Hex {
     log: HexLog

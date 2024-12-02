@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'bun:test'
 import { Hex } from './engine'
-import { LogLevel } from './log'
+import { LogLevel } from './utils/log'
 
 describe('Core Engine', () => {
     it('initializing with no config', () => {
