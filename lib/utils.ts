@@ -1,11 +1,13 @@
-import type { Hex } from './engine'
+import { initLog } from './log'
 import type { HexinConfig } from './types'
 
-export function initUtils(hex: Hex, config: Partial<HexinConfig>) {
-    hex.log.debug('Initializing utils')
+export function initUtils(config: Partial<HexinConfig>) {
+    const log = initLog(config)
+    log.debug('Initializing utils')
     const utils = {
+        log,
         config,
     }
-    hex.log.debug('Utils initialized')
+    log.debug('Utils initialized')
     return utils
 }

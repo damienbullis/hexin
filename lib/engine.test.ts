@@ -6,6 +6,6 @@ describe('Core Engine', () => {
     it('initializing with no config', () => {
         const hex = new Hex()
         expect(hex).toBeDefined()
-        expect(hex.utils.config.log_options?.level).toBe(LogLevel.DEBUG)
+        expect(hex.config.log_options?.level).toBe(LogLevel.DEBUG)
     })
 })

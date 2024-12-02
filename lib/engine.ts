@@ -1,30 +1,27 @@
 import type { HexinConfig } from './types'
-import { initEntities } from './entities'
+// import { initEntities } from './entities'
 import { initSystems } from './systems'
-import { initEvents } from './events'
+// import { initEvents } from './events'
 import { initUtils } from './utils'
 import { initLog } from './log'
 // import { rainbowIntroText } from '../utils'
 
-type HexEntities = ReturnType<typeof initEntities>
+// type HexEntities = ReturnType<typeof initEntities>
 type HexSystems = ReturnType<typeof initSystems>
-type HexEvents = ReturnType<typeof initEvents>
-type HexUtils = ReturnType<typeof initUtils>
+// type HexEvents = ReturnType<typeof initEvents>
+// type HexUtils = ReturnType<typeof initUtils>
 type HexLog = ReturnType<typeof initLog>
 
 class Hex {
-    entities: HexEntities
-    systems: HexSystems
-    events: HexEvents
-    utils: HexUtils
     log: HexLog
-    constructor(config: Partial<HexinConfig> = {}) {
-        this.log = initLog(config)
-        // this.log.info(rainbowIntroText())
-        this.utils = initUtils(this, config)
-        this.events = initEvents(this)
+    config: Partial<HexinConfig>
+    systems: HexSystems
+    // events: HexEvents
+    constructor(c: Partial<HexinConfig> = {}) {
+        const { log, config } = initUtils(c)
+        this.log = log
+        this.config = config
         this.systems = initSystems(this)
-        this.entities = initEntities(this)
     }
 }
 
