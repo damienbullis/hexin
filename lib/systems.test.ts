@@ -7,7 +7,7 @@ import { MemoryLog } from './utils/log/writers'
 
 // @ts-expect-error - test system
 class TestSystem implements System {
-    _type = 'TestSystem' as const
+    _type = 'TestSystem'
     run() {}
 }
 
@@ -69,18 +69,22 @@ describe('Core Systems', () => {
     it('should add a system with dependencies', () => {
         const systems = initSystems(hex)
         class DepSystem implements SystemBase {
-            _type = 'DepSystem' as const
+            _type = 'DepSystem'
             run() {}
         }
         class DependentSystem implements SystemBase {
-            _type = 'DependentSystem' as const
+            _type = 'DependentSystem'
             run() {}
         }
-        systems.add(DependentSystem)
         systems.add(DepSystem)
+        systems.add(DependentSystem)
         // @ts-expect-error - no systems registered
         systems.use('DepSystem', 'DependentSystem')
+        // @ts-expect-error - no systems registered
+        systems.use('DependentSystem', 'DepSystem')
 
-        expect(systems.all()).toHaveLength(2)
+        const all = systems.all()
+        expect(all).toHaveLength(2)
+        expect(all[0]!._type).toBe('DependentSystem')
     })
 })

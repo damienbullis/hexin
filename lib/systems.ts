@@ -26,6 +26,7 @@ export function initSystems<S extends SystemBase = SystemBase>(engine: Hex) {
         if (!graph.has(dep))
             throw new Error(`${SystemErrors.NOT_FOUND}: ${dep}`)
         graph.get(system)!.push(dep)
+        if (hasCycle(system)) throw new Error(SystemErrors.CYCLE)
         isDirty = true
     }
     const getDeps = (system: S): S[] => {
@@ -35,31 +36,39 @@ export function initSystems<S extends SystemBase = SystemBase>(engine: Hex) {
         return Array.from(graph.keys())
     }
 
-    // const hasCycle = (system: S, visited: Set<S> = new Set(), recStack: Set<S> = new Set()): boolean => {
-    //     for (const s of getSystems()) {
-    //         if (hasCycleUtil(s, visited, recStack)) {
-    //             return true
-    //         }
-    //     }
-    //     return false
-    // }
+    const hasCycle = (
+        system: S,
+        visited: Set<S> = new Set(),
+        recStack: Set<S> = new Set()
+    ): boolean => {
+        for (const s of getSystems()) {
+            if (hasCycleUtil(s, visited, recStack)) {
+                return true
+            }
+        }
+        return false
+    }
 
-    // const hasCycleUtil = (system: S, visited: Set<S>, recStack: Set<S>): boolean => {
-    //     if (!visited.has(system)) {
-    //         visited.add(system)
-    //         recStack.add(system)
-    //         const deps = getDeps(system)
-    //         for (const dep of deps) {
-    //             if (!visited.has(dep) && hasCycleUtil(dep, visited, recStack)) {
-    //                 return true
-    //             } else if (recStack.has(dep)) {
-    //                 return true
-    //             }
-    //         }
-    //     }
-    //     recStack.delete(system)
-    //     return false
-    // }
+    const hasCycleUtil = (
+        system: S,
+        visited: Set<S>,
+        recStack: Set<S>
+    ): boolean => {
+        if (!visited.has(system)) {
+            visited.add(system)
+            recStack.add(system)
+            const deps = getDeps(system)
+            for (const dep of deps) {
+                if (!visited.has(dep) && hasCycleUtil(dep, visited, recStack)) {
+                    return true
+                } else if (recStack.has(dep)) {
+                    return true
+                }
+            }
+        }
+        recStack.delete(system)
+        return false
+    }
 
     /**
      * Topological sort of systems
