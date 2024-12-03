@@ -20,15 +20,6 @@ export function initSystems<S extends SystemBase = SystemBase>(engine: Hex) {
     let systems: S[] = []
     let isDirty = false
 
-    const addDep = (system: S, dep: S) => {
-        if (!graph.has(system))
-            throw new Error(`${SystemErrors.NOT_FOUND}: ${system}`)
-        if (!graph.has(dep))
-            throw new Error(`${SystemErrors.NOT_FOUND}: ${dep}`)
-        graph.get(system)!.push(dep)
-        if (hasCycle(system)) throw new Error(SystemErrors.CYCLE) // Is this where I should check for cycles?
-        isDirty = true
-    }
     const getDeps = (system: S): S[] => {
         return graph.get(system) || []
     }
@@ -36,12 +27,24 @@ export function initSystems<S extends SystemBase = SystemBase>(engine: Hex) {
         return Array.from(graph.keys())
     }
 
+    const addDep = (system: S, dep: S) => {
+        if (!graph.has(system))
+            throw new Error(`${SystemErrors.NOT_FOUND}: ${system}`)
+        if (!graph.has(dep))
+            throw new Error(`${SystemErrors.NOT_FOUND}: ${dep}`)
+        graph.get(system)!.push(dep)
+        if (hasCycle(getSystems())) {
+            throw new Error(SystemErrors.CYCLE)
+        }
+        isDirty = true
+    }
+
     const hasCycle = (
-        system: S,
+        allSystems: S[],
         visited: Set<S> = new Set(),
         recStack: Set<S> = new Set()
     ): boolean => {
-        for (const s of getSystems()) {
+        for (const s of allSystems) {
             if (hasCycleUtil(s, visited, recStack)) {
                 return true
             }
@@ -103,7 +106,11 @@ export function initSystems<S extends SystemBase = SystemBase>(engine: Hex) {
             }
         }
 
-        if (sorted.length !== getSystems().length) {
+        const allSystems = getSystems()
+        if (sorted.length !== allSystems.length) {
+            throw new Error(SystemErrors.CYCLE)
+        }
+        if (hasCycle(allSystems)) {
             throw new Error(SystemErrors.CYCLE)
         }
 
