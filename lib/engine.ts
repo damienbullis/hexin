@@ -13,7 +13,7 @@ type HexLog = ReturnType<typeof initUtils>['log']
 
 class Hex {
     log: HexLog
-    config: Partial<HexinConfig>
+    config: HexinConfig
     systems: HexSystems
     // events: HexEvents
     constructor(c: Partial<HexinConfig> = {}) {
