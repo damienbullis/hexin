@@ -36,11 +36,11 @@ const hex = new Hex({
 // you should see each @ts-expect-error show an lsp error
 describe('Systems', () => {
     const systems = initSystems(hex)
-    it('Add a system', () => {
+    it('can add a system', () => {
         systems.add(A)
         expect(systems.all()).toHaveLength(1)
     })
-    it('Get a system', () => {
+    it('can get a system', () => {
         // @ts-expect-error - no systems registered
         const system = systems.get('A')
         expect(system).toBeInstanceOf(A)
