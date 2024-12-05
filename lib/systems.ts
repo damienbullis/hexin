@@ -180,7 +180,3 @@ class HexSystemError extends Error {
         this.name = type
     }
 }
-
-function createSystemErrors(engine: Hex) {
-    return
-}
