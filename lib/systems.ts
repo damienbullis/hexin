@@ -178,6 +178,13 @@ function assertSystem<K extends SKeys, T extends System<K>>(
     type: K
 ): asserts s is T {
     if (s._type !== type) {
-        throw new Error(`${SystemErrors.TYPE_MISMATCH}: ${s._type} !== ${type}`)
+        throw new HexSystemError('TYPE_MISMATCH', `${s._type} !== ${type}`)
+    }
+}
+
+class HexSystemError extends Error {
+    constructor(type: keyof typeof SystemErrors, message: string) {
+        super(`${type}: ${message}`)
+        this.name = type
     }
 }
