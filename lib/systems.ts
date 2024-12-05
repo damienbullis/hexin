@@ -1,5 +1,5 @@
 import type { Hex } from './engine'
-import type { SKeys, System, SystemBase } from './types'
+import type { SKeys, System, SystemI } from './types'
 
 // Do I like these?
 enum SystemErrors {
@@ -14,8 +14,8 @@ enum SystemErrors {
  * @param engine
  * @returns Systems API
  */
-export function initSystems<S extends SystemBase = SystemBase>(engine: Hex) {
-    const systemMap = new Map<string, S>()
+export function initSystems<S extends SystemI = SystemI>(engine: Hex) {
+    const systemMap: Record<string, S> = {}
     const graph = new Map<S, S[]>()
     let systems: S[] = []
     let isDirty = false
@@ -32,10 +32,11 @@ export function initSystems<S extends SystemBase = SystemBase>(engine: Hex) {
             throw new Error(`${SystemErrors.NOT_FOUND}: ${system}`)
         if (!graph.has(dep))
             throw new Error(`${SystemErrors.NOT_FOUND}: ${dep}`)
+        if (graph.get(dep)?.includes(system))
+            throw new Error(
+                `${SystemErrors.CYCLE}: ${dep} depends on ${system}`
+            )
         graph.get(system)!.push(dep)
-        if (hasCycle(getSystems())) {
-            throw new Error(SystemErrors.CYCLE)
-        }
         isDirty = true
     }
 
@@ -127,9 +128,9 @@ export function initSystems<S extends SystemBase = SystemBase>(engine: Hex) {
          */
         add<T extends S>(system: { new (e: Hex): T }): void {
             const s = new system(engine)
-            if (systemMap.has(s._type))
+            if (systemMap[s._type])
                 throw new Error(`${SystemErrors.EXISTS}: ${s._type}`)
-            systemMap.set(s._type, s)
+            systemMap[s._type] = s
             if (!graph.has(s)) {
                 graph.set(s, [])
                 isDirty = true
@@ -141,14 +142,13 @@ export function initSystems<S extends SystemBase = SystemBase>(engine: Hex) {
          * @param dep Optional add a dependency to the system. (Typically used by systems, during initialization)
          */
         get<K extends SKeys>(type: K, dep?: SKeys): System<K> {
-            const system = systemMap.get(type)
+            const system = systemMap[type]
             if (!system) throw new Error(`${SystemErrors.NOT_FOUND}: ${type}`)
             if (dep) {
-                const d = systemMap.get(dep)
+                const d = systemMap[dep]
                 if (!d) throw new Error(`${SystemErrors.NOT_FOUND}: ${dep}`)
                 addDep(system, d)
             }
-
             assertSystem(system, type)
             return system
         },
@@ -158,8 +158,8 @@ export function initSystems<S extends SystemBase = SystemBase>(engine: Hex) {
          * @param dep The system to depend on
          */
         use(system: SKeys, dep: SKeys): void {
-            const s = systemMap.get(system)
-            const d = systemMap.get(dep)
+            const s = systemMap[system]
+            const d = systemMap[dep]
             if (!s) throw new Error(`${SystemErrors.NOT_FOUND}: ${system}`)
             if (!d) throw new Error(`${SystemErrors.NOT_FOUND}: ${dep}`)
             addDep(s, d)
@@ -174,8 +174,10 @@ export function initSystems<S extends SystemBase = SystemBase>(engine: Hex) {
 }
 
 function assertSystem<K extends SKeys, T extends System<K>>(
-    system: SystemBase,
+    s: SystemI,
     type: K
-): asserts system is T {
-    if (system._type !== type) throw new Error(SystemErrors.TYPE_MISMATCH)
+): asserts s is T {
+    if (s._type !== type) {
+        throw new Error(`${SystemErrors.TYPE_MISMATCH}: ${s._type} !== ${type}`)
+    }
 }

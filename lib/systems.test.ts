@@ -1,9 +1,10 @@
+import { describe, expect, it } from 'bun:test'
 import { Hex } from './engine'
+import type { SystemI } from './types'
 import { initSystems } from './systems'
-import { beforeEach, describe, expect, it } from 'bun:test'
-import type { System, SystemBase } from './types'
-import { LogLevel } from './utils/log'
+
 import { MemoryLog } from './utils/log/writers'
+import { LogLevel } from './utils/log'
 
 // @ts-expect-error - test system
 class A implements System {
@@ -27,6 +28,7 @@ const hex = new Hex({
 // declare module './types' {
 //     interface SystemRegistry {
 //         A: A
+//         B: B
 //     }
 // }
 
@@ -78,8 +80,7 @@ describe('w/ Dependencies', () => {
     })
 
     it('sort systems by dependencies', () => {
-        // @ts-expect-error - test system
-        class C implements System {
+        class C implements SystemI {
             _type = 'C'
             run() {}
         }
@@ -98,7 +99,7 @@ describe('w/ Dependencies', () => {
         expect(all).toEqual(['B', 'C', 'A'])
     })
 
-    it('get a system and add dependency (A -> B)', () => {
+    it('get system & add dependency (A -> B) returns correct system order', () => {
         const systems = initSystems(hex)
         systems.add(A)
         systems.add(B)
@@ -106,7 +107,7 @@ describe('w/ Dependencies', () => {
         systems.get('B', 'A')
         expect(systems.all()[0]!._type).toBe('A')
     })
-    it('get a system and add dependency (B -> A)', () => {
+    it('get system & add dependency (B -> A) returns correct system order', () => {
         const systems = initSystems(hex)
         systems.add(A)
         systems.add(B)

@@ -20,7 +20,10 @@ class Hex {
         const { log, config } = initUtils(c)
         this.log = log
         this.config = config
+
+        // NEXT: Events
         this.systems = initSystems(this)
+        // NEXT: Components / Entities
     }
 }
 
