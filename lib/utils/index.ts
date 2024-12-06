@@ -1,7 +1,7 @@
 import { initLog, LogLevel } from './log'
-import type { HexinConfig } from '../types'
+import type { HexConfig } from '../types'
 
-const DEFAULT: HexinConfig = {
+const DEFAULT: HexConfig = {
     log_options: {
         level: LogLevel.DEBUG,
         outputs: [
@@ -13,7 +13,7 @@ const DEFAULT: HexinConfig = {
     rng_seed: 0,
 }
 
-export function initUtils(config: Partial<HexinConfig>) {
+export function initUtils(config: Partial<HexConfig>) {
     const log = initLog(config)
     const utils = {
         log,

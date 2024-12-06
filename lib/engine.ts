@@ -1,4 +1,4 @@
-import type { HexinConfig } from './types'
+import type { HexConfig } from './types'
 // import { initEntities } from './entities'
 import { initSystems } from './systems'
 // import { initEvents } from './events'
@@ -13,10 +13,10 @@ type HexLog = ReturnType<typeof initUtils>['log']
 
 class Hex {
     log: HexLog
-    config: HexinConfig
+    config: HexConfig
     systems: HexSystems
     // events: HexEvents
-    constructor(c: Partial<HexinConfig> = {}) {
+    constructor(c: Partial<HexConfig> = {}) {
         const { log, config } = initUtils(c)
         this.log = log
         this.config = config

@@ -35,7 +35,7 @@ export type CKeys = keyof ComponentRegistry
 export type Component<K extends CKeys = CKeys> = ComponentRegistry[K]
 
 // Additional Types
-export type HexinConfig = {
+export type HexConfig = {
     log_options: LoggerOptions
     rng_seed: number
 }

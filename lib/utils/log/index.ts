@@ -1,4 +1,4 @@
-import type { HexinConfig } from '../../types'
+import type { HexConfig } from '../../types'
 
 // Log Interfaces
 interface Logger {
@@ -109,7 +109,7 @@ const defaultOptions: LoggerOptions = {
     outputs: [defaultOutput],
 }
 
-export function initLog(config: Partial<HexinConfig> = {}): Logger {
+export function initLog(config: Partial<HexConfig> = {}): Logger {
     if (!config.log_options) {
         config.log_options = defaultOptions
     }
