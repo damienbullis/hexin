@@ -1,9 +1,25 @@
 import type { Hex } from './engine'
 import type { SKeys, System, SystemI } from './types'
+
 type AssertSystem = <K extends SKeys, T extends System<K>>(
     s: SystemI,
     type: K
 ) => asserts s is T
+
+// Do I like these?
+enum SystemErrors {
+    TYPE_MISMATCH = 'System type mismatch',
+    EXISTS = 'System already exists',
+    NOT_FOUND = 'System not found',
+    CYCLE = 'Cycle detected',
+}
+class HexSystemError extends Error {
+    constructor(type: keyof typeof SystemErrors, message?: string) {
+        super(`${SystemErrors[type]}${message ? `: ${message}` : ''}`)
+        this.name = type
+    }
+}
+
 /**
  * Initialize Hex Systems
  * @param engine
@@ -17,8 +33,7 @@ export function initSystems<S extends SystemI = SystemI>(engine: Hex) {
 
     const systemError = (type: keyof typeof SystemErrors, message?: string) => {
         const err = new HexSystemError(type, message)
-        // not sure if I like including the stack
-        engine.log.error(err.message, { stack: err.stack })
+        engine.log.error(err.message)
         return err
     }
     const assertSystem: AssertSystem = (s, type) => {
@@ -116,10 +131,18 @@ export function initSystems<S extends SystemI = SystemI>(engine: Hex) {
         return systems
     }
 
+    engine.log.debug('SYSTEMS: Initialized.')
     return {
         /**
          * Add a system to the engine
-         * @param system The system to add. Must extend SystemBase.
+         * @param system The system class to add.
+         * @example
+         * ```ts
+         * class SomeSystem extends SystemI {
+         *   // ...
+         * }
+         * engine.systems.add(SomeSystem) // Add the system class, not an instance.
+         * ```
          */
         add<T extends S>(system: { new (e: Hex): T }): void {
             const s = new system(engine)
@@ -159,24 +182,10 @@ export function initSystems<S extends SystemI = SystemI>(engine: Hex) {
             addDep(s, d)
         },
         /**
-         * Return all systems in topological order
+         * Get all systems
          */
         all() {
             return topSort()
         },
-    }
-}
-
-// Do I like these?
-enum SystemErrors {
-    NOT_FOUND = 'System not found',
-    TYPE_MISMATCH = 'System type mismatch',
-    EXISTS = 'System already exists',
-    CYCLE = 'Cycle detected',
-}
-class HexSystemError extends Error {
-    constructor(type: keyof typeof SystemErrors, message?: string) {
-        super(`${SystemErrors[type]}${message ? `: ${message}` : ''}`)
-        this.name = type
     }
 }
