@@ -21,9 +21,7 @@ class HexSystemError extends Error {
 }
 
 /**
- * Initialize Hex Systems
- * @param engine
- * @returns Systems API
+ * Hex Systems Initializer
  */
 export function initSystems<S extends SystemI = SystemI>(engine: Hex) {
     const systemMap: Record<string, S> = {}
@@ -31,6 +29,7 @@ export function initSystems<S extends SystemI = SystemI>(engine: Hex) {
     let systems: S[] = []
     let isDirty = false
 
+    // Errors
     const systemError = (type: keyof typeof SystemErrors, message?: string) => {
         const err = new HexSystemError(type, message)
         engine.log.error(err.message)
@@ -41,12 +40,10 @@ export function initSystems<S extends SystemI = SystemI>(engine: Hex) {
             throw systemError('TYPE_MISMATCH', `${s._type} !== ${type}`)
         }
     }
-    const getDeps = (system: S): S[] => {
-        return graph.get(system) || []
-    }
-    const getSystems = (): S[] => {
-        return Array.from(graph.keys())
-    }
+
+    // Dependency Graph Helpers
+    const getDeps = (system: S): S[] => graph.get(system) || []
+    const getSystems = (): S[] => Array.from(graph.keys())
     const addDep = (system: S, dep: S) => {
         if (!graph.has(system)) throw systemError('NOT_FOUND', system._type)
         if (!graph.has(dep)) throw systemError('NOT_FOUND', dep._type)
@@ -89,7 +86,7 @@ export function initSystems<S extends SystemI = SystemI>(engine: Hex) {
     }
 
     /**
-     * Topological sort of systems
+     * Topological sort of systems, based on dependencies
      */
     const topSort = (): S[] => {
         if (!isDirty) return systems
