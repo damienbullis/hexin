@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { initEntities } from './entities'
-import { Hex } from './engine'
+import { initEntities } from '../entities'
+import { Hex } from '../engine'
 // import type { Component } from './types'
 
 describe('Entities', () => {

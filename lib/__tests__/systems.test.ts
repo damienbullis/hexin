@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'bun:test'
-import { Hex } from './engine'
-import type { SystemI } from './types'
-import { initSystems } from './systems'
+import { Hex } from '../engine'
+import type { SystemI } from '../types'
+import { initSystems } from '../systems'
 
-import { MemoryLog } from './utils/log/writers'
-import { LogLevel } from './utils/log'
+import { MemoryLog } from '../utils/log/writers'
+import { LogLevel } from '../utils/log'
 
 const createSystem = (type: string) => {
     return class implements SystemI {
