@@ -21,13 +21,13 @@ export function initEntities(_: Hex) {
     const addComponent = (entity: Entity, component: ComponentI) => {
         const key = component._type
         const map = componentEntityMap[key]
+        if (entities[entity]!.find((c) => c._type === key))
+            throw new Error(`Entity ${entity} already has component ${key}`)
         if (!map) {
             componentEntityMap[key] = [entity]
         } else {
             map.push(entity)
         }
-        if (entities[entity]!.find((c) => c._type === key))
-            throw new Error(`Entity ${entity} already has component ${key}`)
         entities[entity]!.push(component)
     }
 
@@ -72,6 +72,7 @@ export function initEntities(_: Hex) {
                     throw new Error(
                         `Entity ${entity} not found in component map`
                     )
+
                 map.splice(idx, 1)
             }
             delete entities[entity]
