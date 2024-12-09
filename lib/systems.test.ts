@@ -15,13 +15,12 @@ const createSystem = (type: string) => {
 const A = createSystem('A')
 const B = createSystem('B')
 const C = createSystem('C')
-
-const hex = new Hex({
+const hexOptions = {
     log_options: {
         level: LogLevel.DEBUG,
         outputs: [{ output: new MemoryLog() }],
     },
-})
+}
 
 // To check if the types are working correctly uncomment the following:
 // declare module './types' {
@@ -34,7 +33,7 @@ const hex = new Hex({
 // After uncommenting the above,
 // you should see each @ts-expect-error show an lsp error
 describe('Systems', () => {
-    const systems = initSystems(hex)
+    const systems = initSystems(new Hex(hexOptions))
     it('can add a system', () => {
         systems.add(A)
         expect(systems.all()).toHaveLength(1)
@@ -56,6 +55,7 @@ describe('Systems', () => {
 })
 
 describe('w/ Dependencies', () => {
+    const hex = new Hex(hexOptions)
     it('add a dependency to a system', () => {
         const systems = initSystems(hex)
         systems.add(A)
@@ -94,7 +94,7 @@ describe('w/ Dependencies', () => {
         expect(all).toEqual(['B', 'C', 'A'])
     })
 
-    it('get system & add dependency (A -> B) returns correct system order', () => {
+    it('get system & add dependency (A -> B)', () => {
         const systems = initSystems(hex)
         systems.add(A)
         systems.add(B)
@@ -102,7 +102,7 @@ describe('w/ Dependencies', () => {
         systems.get('B', 'A')
         expect(systems.all()[0]!._type).toBe('A')
     })
-    it('get system & add dependency (B -> A) returns correct system order', () => {
+    it('get system & add dependency (B -> A)', () => {
         const systems = initSystems(hex)
         systems.add(A)
         systems.add(B)
@@ -112,6 +112,10 @@ describe('w/ Dependencies', () => {
         // @ts-expect-error - no systems registered
         expect(() => systems.get('A', 'C')).toThrow('System not found: C')
     })
+})
+
+describe('w/ Hooks', () => {
+    const hex = new Hex(hexOptions)
 
     it('can add systems to pre hook', () => {
         const systems = initSystems(hex)
