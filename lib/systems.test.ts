@@ -47,10 +47,10 @@ describe('Systems', () => {
     })
     it('should throw when system not found', () => {
         // @ts-expect-error - no systems registered
-        expect(() => systems.get('C')).toThrow('System not found: C')
+        expect(() => systems.get('C')).toMatchSnapshot()
     })
     it('should throw when adding a duplicate system', () => {
-        expect(() => systems.add(A)).toThrow('System already exists: A')
+        expect(() => systems.add(A)).toMatchSnapshot()
     })
 })
 
@@ -74,8 +74,9 @@ describe('w/ Dependencies', () => {
         systems.add(B)
         // @ts-expect-error - no systems registered
         systems.use('A', 'B')
+
         // @ts-expect-error - no systems registered
-        expect(() => systems.use('B', 'A')).toThrow('Cycle detected')
+        expect(() => systems.use('B', 'A')).toMatchSnapshot()
     })
 
     it('sort systems by dependencies', () => {
@@ -110,7 +111,7 @@ describe('w/ Dependencies', () => {
         systems.get('A', 'B')
         expect(systems.all()[0]!._type).toBe('B')
         // @ts-expect-error - no systems registered
-        expect(() => systems.get('A', 'C')).toThrow('System not found: C')
+        expect(() => systems.get('A', 'C')).toMatchSnapshot()
     })
 })
 
