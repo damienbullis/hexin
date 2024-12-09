@@ -58,6 +58,9 @@ export function initEntities(_: Hex) {
             entities[id] = []
             return id
         },
+        /**
+         * Delete an entity
+         */
         delete(entity: Entity) {
             if (!entities[entity]) throw new Error(`Entity ${entity} not found`)
             for (const comp of entities[entity]) {
@@ -116,13 +119,46 @@ export function initEntities(_: Hex) {
             assertComponent(c, type)
             return c
         },
+        /**
+         * Get all components from an entity
+         */
         getMany<T extends Component[]>(entity: Entity, types: CKeys[]): T {
             const ent = entities[entity]
             if (!ent) throw new Error(`Entity ${entity} not found`)
             return types.map((t) => this.get(entity, t)) as T
         },
-        with() {},
-        getWith() {},
+        /**
+         * Get all entities with a component or components
+         */
+        with(types: CKeys | Array<CKeys>) {
+            if (Array.isArray(types)) {
+                const sets = types.map((type) => componentEntityMap[type] || [])
+                const [first, ...rest] = sets.sort(
+                    (a, b) => a.length - b.length
+                )
+                return (
+                    first?.filter((e) => rest.every((s) => s.includes(e))) || []
+                )
+            } else {
+                const map = componentEntityMap[types]
+                return map || []
+            }
+        },
+        /**
+         * Convenience method to get entities with components, then get those components.
+         */
+        getWith<T extends Component[]>(types: CKeys | Array<CKeys>) {
+            return this.with(types).map((e) => {
+                if (Array.isArray(types)) {
+                    return this.getMany<T>(e, types)
+                } else {
+                    return this.get(e, types)
+                }
+            })
+        },
+        /**
+         * Get all entities
+         */
         all() {
             return entities
         },
