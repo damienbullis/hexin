@@ -6,11 +6,48 @@ import type { CKeys, Component, ComponentI } from './types'
 
 type Entity = number
 
-export function initEntities(engine: Hex) {
+const assertComponent: AssertComponent = (comp, type) => {
+    if (comp._type !== type) {
+        throw new Error(`Component ${type} not mismatched`)
+    }
+}
+
+export function initEntities(_: Hex) {
     let nextId = 0
     const pool: Entity[] = []
     const entities: Array<ComponentI[]> = []
     const componentEntityMap: Record<string, Entity[]> = {}
+
+    const addComponent = (entity: Entity, component: ComponentI) => {
+        const key = component._type
+        const map = componentEntityMap[key]
+        if (!map) {
+            componentEntityMap[key] = [entity]
+        } else {
+            map.push(entity)
+        }
+        if (entities[entity]!.find((c) => c._type === key))
+            throw new Error(`Entity ${entity} already has component ${key}`)
+        entities[entity]!.push(component)
+    }
+
+    const removeComponent = (entity: Entity, type: CKeys) => {
+        const ent = entities[entity]
+        if (!ent) throw new Error(`Entity ${entity} not found`)
+        const map = componentEntityMap[type]
+        if (!map) throw new Error(`Component ${type} not found in map`)
+        const idx = ent.findIndex((c) => c._type === type)
+        if (idx === -1)
+            throw new Error(`Component ${type} not found in entity ${entity}`)
+        // Remove component from entity
+        ent.splice(idx, 1)
+
+        const mapIdx = map.indexOf(entity)
+        if (mapIdx === -1)
+            throw new Error(`Entity ${entity} not found in component map`)
+        // Remove entity from component map
+        map.splice(mapIdx, 1)
+    }
 
     return {
         /**
@@ -37,20 +74,52 @@ export function initEntities(engine: Hex) {
             delete entities[entity]
             pool.push(entity)
         },
-        add() {},
+        /**
+         * Add a component or components to an entity
+         */
+        add(entity: Entity, components: ComponentI | Array<ComponentI>) {
+            if (!entities[entity]) throw new Error(`Entity ${entity} not found`)
+            if (Array.isArray(components)) {
+                for (const component of components) {
+                    addComponent(entity, component)
+                }
+            } else {
+                addComponent(entity, components)
+            }
+        },
+        /**
+         * Remove a component or components from an entity
+         */
+        remove(entity: Entity, types: CKeys | Array<CKeys>) {
+            const ent = entities[entity]
+            if (!ent) throw new Error(`Entity ${entity} not found`)
+            if (Array.isArray(types)) {
+                for (const type of types) {
+                    removeComponent(entity, type)
+                }
+            } else {
+                removeComponent(entity, types)
+            }
+        },
         /**
          * Get a component or components from an entity
          */
         get<K extends CKeys>(entity: Entity, type: K): Component<K> {
             const ent = entities[entity]
             if (!ent) throw new Error(`Entity ${entity} not found`)
-            const comp = ent.find((c) => c._type === type)
-            if (!comp)
+            const c = ent.find((c) => c._type === type)
+            if (!c)
                 throw new Error(
                     `Component ${type} not found in entity ${entity}`
                 )
-            assertComponent(comp, type)
-            return comp
+
+            assertComponent(c, type)
+            return c
+        },
+        getMany<T extends Component[]>(entity: Entity, types: CKeys[]): T {
+            const ent = entities[entity]
+            if (!ent) throw new Error(`Entity ${entity} not found`)
+            return types.map((t) => this.get(entity, t)) as T
         },
         with() {},
         getWith() {},
@@ -59,15 +128,7 @@ export function initEntities(engine: Hex) {
         },
     }
 }
-
-function assertComponent<K extends CKeys, T extends Component<K>>(
-    comp: ComponentI,
+type AssertComponent = <K extends CKeys, T extends Component<K>>(
+    c: ComponentI,
     type: K
-): asserts comp is T {
-    if (comp._type !== type) {
-        throw new Error(`Component ${type} not mismatched`)
-    }
-}
-
-// show me a infer the first element of an array in typescript
-type First<T extends any[]> = T extends [infer F, ...any[]] ? F : never
+) => asserts c is T
