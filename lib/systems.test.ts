@@ -6,16 +6,15 @@ import { initSystems } from './systems'
 import { MemoryLog } from './utils/log/writers'
 import { LogLevel } from './utils/log'
 
-// @ts-expect-error - test system
-class A implements System {
-    _type = 'A'
-    run() {}
+const createSystem = (type: string) => {
+    return class implements SystemI {
+        _type = type
+        run() {}
+    }
 }
-// @ts-expect-error - test system
-class B implements System {
-    _type = 'B'
-    run() {}
-}
+const A = createSystem('A')
+const B = createSystem('B')
+const C = createSystem('C')
 
 const hex = new Hex({
     log_options: {
@@ -80,10 +79,6 @@ describe('w/ Dependencies', () => {
     })
 
     it('sort systems by dependencies', () => {
-        class C implements SystemI {
-            _type = 'C'
-            run() {}
-        }
         const systems = initSystems(hex)
         systems.add(A)
         systems.add(B)
@@ -116,5 +111,29 @@ describe('w/ Dependencies', () => {
         expect(systems.all()[0]!._type).toBe('B')
         // @ts-expect-error - no systems registered
         expect(() => systems.get('A', 'C')).toThrow('System not found: C')
+    })
+
+    it('can add systems to pre hook', () => {
+        const systems = initSystems(hex)
+        systems.add(A)
+        systems.add(B)
+        // @ts-expect-error - no systems registered
+        systems.use('A', 'B')
+        systems.addHook('pre', C)
+        expect(systems.all()[0]!._type).toBe('C')
+        expect(systems.all()[1]!._type).toBe('B')
+        expect(systems.all()[2]!._type).toBe('A')
+    })
+
+    it('can add systems to post hook', () => {
+        const systems = initSystems(hex)
+        systems.add(A)
+        systems.add(B)
+        // @ts-expect-error - no systems registered
+        systems.use('A', 'B')
+        systems.addHook('post', C)
+        expect(systems.all()[0]!._type).toBe('B')
+        expect(systems.all()[1]!._type).toBe('A')
+        expect(systems.all()[2]!._type).toBe('C')
     })
 })

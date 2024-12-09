@@ -39,7 +39,8 @@ export class Deferred implements SystemI {
  * Hex Systems Initializer
  */
 export function initSystems(engine: Hex) {
-    const deferred = new Deferred()
+    const preSystems: SystemI[] = []
+    const postSystems: SystemI[] = []
     const systemMap: Record<string, SystemI> = {}
     const graph = new Map<SystemI, SystemI[]>()
     let systems: SystemI[] = []
@@ -138,8 +139,10 @@ export function initSystems(engine: Hex) {
         if (sorted.length !== allSystems.length) throw systemError('CYCLE')
         if (hasCycle(allSystems)) throw systemError('CYCLE')
 
+        // Reverse the array to get dependency order
         sorted.reverse()
-        sorted.push(deferred)
+        // Prepend and append pre/post systems
+        sorted = preSystems.concat(sorted, postSystems)
         systems = sorted
         isDirty = false
         return systems
@@ -158,7 +161,7 @@ export function initSystems(engine: Hex) {
          * engine.systems.add(SomeSystem) // Add the system class, not an instance.
          * ```
          */
-        add<T extends SystemI>(system: { new (e: Hex): T }): void {
+        add(system: { new (e: Hex): SystemI }) {
             const s = new system(engine)
             if (systemMap[s._type]) throw systemError('EXISTS', s._type)
             systemMap[s._type] = s
@@ -200,6 +203,14 @@ export function initSystems(engine: Hex) {
          */
         all() {
             return topSort()
+        },
+        /**
+         * Add a system to the pre or post hook
+         */
+        addHook(type: 'pre' | 'post', system: { new (e: Hex): SystemI }) {
+            const s = new system(engine)
+            if (type === 'post') postSystems.push(s)
+            else preSystems.push(s)
         },
     }
 }
