@@ -5,6 +5,7 @@ export interface SystemI {
     _type: SKeys | string
     run(delta: number): void
 }
+
 // type RegisterSystem<T extends SystemI> = {
 //     [K in T['_type']]: T
 // }

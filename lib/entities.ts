@@ -124,8 +124,6 @@ export function initEntities(_: Hex) {
          * Get all components from an entity
          */
         getMany<T extends Component[]>(entity: Entity, types: CKeys[]): T {
-            const ent = entities[entity]
-            if (!ent) throw new Error(`Entity ${entity} not found`)
             return types.map((t) => this.get(entity, t)) as T
         },
         /**
