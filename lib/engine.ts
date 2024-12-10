@@ -10,12 +10,7 @@ type HexSystems = ReturnType<typeof initSystems>
 // type HexEvents = ReturnType<typeof initEvents>
 // type HexUtils = ReturnType<typeof initUtils>
 type HexLog = ReturnType<typeof initUtils>['log']
-type HexError = ReturnType<ReturnType<typeof initUtils>['makeErrors']>
-type HexErrors = {
-    system: HexError
-    entity: HexError
-    event: HexError
-}
+type HexErrors = ReturnType<typeof initUtils>['errors']
 
 class Hex {
     log: HexLog
@@ -24,14 +19,10 @@ class Hex {
     errors: HexErrors
     // events: HexEvents
     constructor(c: Partial<HexConfig> = {}) {
-        const { log, config, makeErrors } = initUtils(c)
+        const { log, config, errors } = initUtils(c)
         this.log = log
         this.config = config
-        this.errors = {
-            system: makeErrors('System'),
-            entity: makeErrors('Entity'),
-            event: makeErrors('Event'),
-        }
+        this.errors = errors
 
         // NEXT: Events
         this.systems = initSystems(this)

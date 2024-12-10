@@ -1,5 +1,3 @@
-import type { HexConfig } from '../../types'
-
 // Log Interfaces
 interface Logger {
     debug(message: string, meta?: Record<string, any>): void
@@ -100,20 +98,8 @@ class Log implements Logger {
     }
 }
 
-const defaultOutput = makeLogOutput({
-    output: { write: console.log },
-})
-
-const defaultOptions: LoggerOptions = {
-    level: LogLevel.DEBUG,
-    outputs: [defaultOutput],
-}
-
-export function initLog(config: Partial<HexConfig> = {}): Logger {
-    if (!config.log_options) {
-        config.log_options = defaultOptions
-    }
-    return new Log(config.log_options)
+export function initLog(config: LoggerOptions): Logger {
+    return new Log(config)
 }
 
 export function makeLogOutput(output: LogOutput) {
