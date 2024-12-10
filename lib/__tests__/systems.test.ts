@@ -3,7 +3,6 @@ import { Hex } from '../engine'
 import type { SystemI } from '../types'
 import { initSystems } from '../systems'
 
-import { MemoryLog } from '../utils/log/writers'
 import { LogLevel } from '../utils/log'
 
 const createSystem = (type: string) => {
@@ -18,7 +17,7 @@ const C = createSystem('C')
 const hexOptions = {
     log_options: {
         level: LogLevel.DEBUG,
-        outputs: [{ output: new MemoryLog() }],
+        outputs: [{ output: { write() {} } }],
     },
 }
 

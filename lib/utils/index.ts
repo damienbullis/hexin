@@ -16,7 +16,7 @@ export function initUtils(c: Partial<HexConfig>) {
     const makeErrors = initErrors(log)
     const utils = {
         log,
-        config, // REFACTOR: might want to a deep merge here?
+        config,
         errors: {
             system: makeErrors('System'),
             entity: makeErrors('Entity'),

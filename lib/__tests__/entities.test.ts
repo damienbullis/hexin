@@ -1,10 +1,17 @@
 import { describe, expect, it } from 'bun:test'
 import { initEntities } from '../entities'
 import { Hex } from '../engine'
+import { LogLevel } from '../utils/log'
 // import type { Component } from './types'
 
+const hexOptions = {
+    log_options: {
+        level: LogLevel.DEBUG,
+        outputs: [{ output: { write() {} } }],
+    },
+}
 describe('Entities', () => {
-    const hex = new Hex() // add log options
+    const hex = new Hex(hexOptions)
     const entities = initEntities(hex)
 
     it('can create an entity', () => {
