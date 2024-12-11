@@ -1,32 +1,30 @@
 import type { HexConfig } from './types'
-// import { initEntities } from './entities'
+import { initEntities } from './entities'
 import { initSystems } from './systems'
-// import { initEvents } from './events'
 import { initUtils } from './utils'
-// import { rainbowIntroText } from '../utils'
+// import { initEvents } from './events'
 
-// type HexEntities = ReturnType<typeof initEntities>
+type HexUtils = ReturnType<typeof initUtils>
+type HexLog = HexUtils['log']
+type HexEntities = ReturnType<typeof initEntities>
 type HexSystems = ReturnType<typeof initSystems>
 // type HexEvents = ReturnType<typeof initEvents>
-// type HexUtils = ReturnType<typeof initUtils>
-type HexLog = ReturnType<typeof initUtils>['log']
-type HexErrors = ReturnType<typeof initUtils>['errors']
 
 class Hex {
     log: HexLog
-    config: HexConfig
     systems: HexSystems
-    errors: HexErrors
+    entities: HexEntities
+    utils: Omit<HexUtils, 'log'>
     // events: HexEvents
     constructor(c: Partial<HexConfig> = {}) {
         const { log, config, errors } = initUtils(c)
         this.log = log
-        this.config = config
-        this.errors = errors
+        this.utils = { config, errors }
+
+        this.systems = initSystems(this)
+        this.entities = initEntities(this)
 
         // NEXT: Events
-        this.systems = initSystems(this)
-        // NEXT: Components / Entities
     }
 }
 

@@ -10,7 +10,7 @@ type AssertSystem = <K extends SKeys, T extends System<K>>(
  * Hex Systems Initializer
  */
 export function initSystems(hex: Hex) {
-    const SystemError = hex.errors.system
+    const SystemError = hex.utils.errors.system
     const systemMap: Record<string, SystemI> = {}
     const graph = new Map<SystemI, SystemI[]>()
     let isDirty = false

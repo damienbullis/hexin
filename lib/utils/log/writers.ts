@@ -6,20 +6,20 @@ export class ConsoleLog implements LogWriter {
         console.log(log)
     }
 }
-export class FileLog implements LogWriter {
-    constructor(private path: string) {}
-    write(log: string): void {
-        // Write to file
-        throw new Error('Method not implemented.')
-    }
-}
-export class NetworkLog implements LogWriter {
-    constructor(private url: string) {}
-    write(log: string): void {
-        // Send to network
-        throw new Error('Method not implemented.')
-    }
-}
+// export class FileLog implements LogWriter {
+//     constructor(private path: string) {}
+//     write(log: string): void {
+//         // Write to file
+//         throw new Error('Method not implemented.')
+//     }
+// }
+// export class NetworkLog implements LogWriter {
+//     constructor(private url: string) {}
+//     write(log: string): void {
+//         // Send to network
+//         throw new Error('Method not implemented.')
+//     }
+// }
 
 // MemoryOutput will modify the logs string passed in.
 export class MemoryLog implements LogWriter {
