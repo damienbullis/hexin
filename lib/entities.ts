@@ -6,23 +6,25 @@ import type { CKeys, Component, ComponentI } from './types'
 
 type Entity = number
 
-const assertComponent: AssertComponent = (comp, type) => {
-    if (comp._type !== type) {
-        throw new Error(`Component ${type} not mismatched`)
-    }
-}
+export function initEntities(hex: Hex) {
+    const EntityError = hex.utils.errors.entity
 
-export function initEntities(_: Hex) {
-    let nextId = 0
-    const pool: Entity[] = []
-    const entities: Array<ComponentI[]> = []
     const componentEntityMap: Record<string, Entity[]> = {}
+    const entities: Array<ComponentI[]> = []
+    const pool: Entity[] = []
+    let nextId = 0
+
+    const assertComponent: AssertComponent = (comp, type) => {
+        if (comp._type !== type) {
+            throw new EntityError('TYPE_MISMATCH', `${comp._type} !== ${type}`)
+        }
+    }
 
     const addComponent = (entity: Entity, component: ComponentI) => {
         const key = component._type
         const map = componentEntityMap[key]
         if (entities[entity]!.find((c) => c._type === key))
-            throw new Error(`Entity ${entity} already has component ${key}`)
+            throw new EntityError('EXISTS', `${entity} already has component ${key}`)
         if (!map) {
             componentEntityMap[key] = [entity]
         } else {
@@ -33,22 +35,21 @@ export function initEntities(_: Hex) {
 
     const removeComponent = (entity: Entity, type: CKeys) => {
         const ent = entities[entity]
-        if (!ent) throw new Error(`Entity ${entity} not found`)
+        if (!ent) throw new EntityError('NOT_FOUND', `${entity}`)
         const map = componentEntityMap[type]
-        if (!map) throw new Error(`Component ${type} not found in map`)
+        if (!map) throw new EntityError('NOT_FOUND', `${type} in component entity map`)
         const idx = ent.findIndex((c) => c._type === type)
-        if (idx === -1)
-            throw new Error(`Component ${type} not found in entity ${entity}`)
+        if (idx === -1) throw new EntityError('NOT_FOUND', `${entity} does not have ${type}`)
         // Remove component from entity
         ent.splice(idx, 1)
 
         const mapIdx = map.indexOf(entity)
-        if (mapIdx === -1)
-            throw new Error(`Entity ${entity} not found in component map`)
+        if (mapIdx === -1) throw new EntityError('NOT_FOUND', `${entity}`)
         // Remove entity from component map
         map.splice(mapIdx, 1)
     }
 
+    hex.log.debug('ENTITIES: Initialized.')
     return {
         /**
          * Create a new entity
@@ -62,16 +63,13 @@ export function initEntities(_: Hex) {
          * Delete an entity
          */
         delete(entity: Entity) {
-            if (!entities[entity]) throw new Error(`Entity ${entity} not found`)
+            if (!entities[entity]) throw new EntityError('NOT_FOUND', `${entity}`)
             for (const comp of entities[entity]) {
                 const key = comp._type
                 const map = componentEntityMap[key]
-                if (!map) throw new Error(`Component ${key} not found in map`)
+                if (!map) throw new EntityError('NOT_FOUND', `${key} in component entity map`)
                 const idx = map.indexOf(entity)
-                if (idx === -1)
-                    throw new Error(
-                        `Entity ${entity} not found in component map`
-                    )
+                if (idx === -1) throw new EntityError('NOT_FOUND', `${entity}`)
 
                 map.splice(idx, 1)
             }
@@ -82,7 +80,7 @@ export function initEntities(_: Hex) {
          * Add a component or components to an entity
          */
         add(entity: Entity, components: ComponentI | Array<ComponentI>) {
-            if (!entities[entity]) throw new Error(`Entity ${entity} not found`)
+            if (!entities[entity]) throw new EntityError('NOT_FOUND', `${entity}`)
             if (Array.isArray(components)) {
                 for (const component of components) {
                     addComponent(entity, component)
@@ -96,7 +94,7 @@ export function initEntities(_: Hex) {
          */
         remove(entity: Entity, types: CKeys | Array<CKeys>) {
             const ent = entities[entity]
-            if (!ent) throw new Error(`Entity ${entity} not found`)
+            if (!ent) throw new Error(`${entity}`)
             if (Array.isArray(types)) {
                 for (const type of types) {
                     removeComponent(entity, type)
@@ -110,12 +108,9 @@ export function initEntities(_: Hex) {
          */
         get<K extends CKeys>(entity: Entity, type: K): Component<K> {
             const ent = entities[entity]
-            if (!ent) throw new Error(`Entity ${entity} not found`)
+            if (!ent) throw new EntityError('NOT_FOUND', `${entity}`)
             const c = ent.find((c) => c._type === type)
-            if (!c)
-                throw new Error(
-                    `Component ${type} not found in entity ${entity}`
-                )
+            if (!c) throw new EntityError('NOT_FOUND', type)
 
             assertComponent(c, type)
             return c
@@ -132,12 +127,8 @@ export function initEntities(_: Hex) {
         with(types: CKeys | Array<CKeys>) {
             if (Array.isArray(types)) {
                 const sets = types.map((type) => componentEntityMap[type] || [])
-                const [first, ...rest] = sets.sort(
-                    (a, b) => a.length - b.length
-                )
-                return (
-                    first?.filter((e) => rest.every((s) => s.includes(e))) || []
-                )
+                const [first, ...rest] = sets.sort((a, b) => a.length - b.length)
+                return first?.filter((e) => rest.every((s) => s.includes(e))) || []
             } else {
                 const map = componentEntityMap[types]
                 return map || []

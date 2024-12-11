@@ -1,3 +1,6 @@
 import type { Hex } from './engine'
 
-export function initEvents(_: Hex) {}
+export function initEvents(hex: Hex) {
+    hex.log.debug('EVENTS: Initialized.')
+    return {}
+}
