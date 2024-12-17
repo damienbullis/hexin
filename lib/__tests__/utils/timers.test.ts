@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from 'bun:test'
 
-import { Timer, timer } from '../../utils/timers'
+import { Timer, TimerFactory } from '../../utils/timers'
 import { Hex } from '../../engine'
 import { LogLevel } from '../../utils/log'
 const options = {
@@ -9,12 +9,11 @@ const options = {
 describe('Timer', () => {
     const hex = new Hex(options)
     let tick = 0
-    const fn = jest.fn(() => tick)
+    const fn = jest.fn(() => tick++)
     const timer = new Timer(hex, fn)
     it('should measure time', () => {
         const end = timer.start('test')
         expect(fn).toHaveBeenCalledTimes(1)
-        tick = 1
         end()
         expect(fn).toHaveBeenCalledTimes(2)
     })
@@ -29,13 +28,13 @@ describe('timer', () => {
         },
     })
     let tick = 0
-    const fn = jest.fn(() => tick)
-    const timerFn = timer(hex, fn)
+    const fn = jest.fn(() => tick++)
+    const timerFn = TimerFactory(hex, fn)
     it('should measure time', () => {
         const label = 'test'
         const end = timerFn(label)
         expect(fn).toHaveBeenCalledTimes(1)
-        tick = 1
+        // tick = 1
         end()
         expect(fn).toHaveBeenCalledTimes(2)
         expect(writer).toHaveBeenCalledTimes(4)

@@ -3,12 +3,16 @@ import { profiler } from '../../utils/profiler'
 
 describe('profiler', () => {
     const writer = jest.fn((s) => s)
-    const p = profiler({ log: writer })
+    const label = 'Profiler Report'
+    const p = profiler({ log: writer }, label)
+
+    const l1 = 'test'
+    const l2 = 'another'
 
     it('should track labels', () => {
-        p.track('test')
-        p.track('test')
-        p.track('another')
+        p.track(l1)
+        p.track(l1)
+        p.track(l2)
         expect(writer).not.toHaveBeenCalled()
     })
 
@@ -22,8 +26,8 @@ describe('profiler', () => {
     it('should generate a report', () => {
         p.report()
         expect(writer).toHaveBeenCalledTimes(3)
-        expect(writer).toHaveBeenNthCalledWith(1, '[Profiler Report] Total ticks: 2')
-        expect(writer).toHaveBeenNthCalledWith(2, '\ttest: 2 ticks')
-        expect(writer).toHaveBeenNthCalledWith(3, '\tanother: 1 ticks')
+        expect(writer).toHaveBeenNthCalledWith(1, `[${label}] Total ticks: 2`)
+        expect(writer).toHaveBeenNthCalledWith(2, `\t${l1}: 2 operations`)
+        expect(writer).toHaveBeenNthCalledWith(3, `\t${l2}: 1 operation`)
     })
 })

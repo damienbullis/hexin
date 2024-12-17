@@ -22,7 +22,19 @@ export class Timer {
     }
 }
 
-export function timer(hex: Hex, tick: () => number) {
+/**
+ * A factory function that creates a timer function.
+ *
+ * @param hex - The Hex instance to use for logging.
+ * @param tick - A function that returns the current simulation tick.
+ */
+export function TimerFactory(hex: Hex, tick: () => number) {
+    /**
+     * A timer function that logs the time elapsed since it was called.
+     *
+     * @param label - The label to use in the log message.
+     * @returns A function that logs the time elapsed since the timer function was called.
+     */
     return <T extends string>(label: T): (() => void) => {
         const t = tick()
         return () => {

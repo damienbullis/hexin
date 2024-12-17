@@ -41,7 +41,7 @@ export function profiler(io: { log: (s: string) => void } = console, label = 'Pr
         report() {
             io.log(`[${label}] Total ticks: ${totalTicks}`)
             for (const [label, count] of Object.entries(counts)) {
-                io.log(`\t${label}: ${count} ticks`)
+                io.log(`\t${label}: ${count} operation${count === 1 ? '' : 's'}`)
             }
         },
     }
