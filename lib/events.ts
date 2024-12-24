@@ -1,22 +1,26 @@
 import type { Hex } from './engine'
 
-type AssertEvent = <K extends EKey, T extends Event<K>>(
-    type: K,
-    event: EventRegistry[EKey]
-) => asserts event is T
+/**
+ * Base Event Interface
+ */
 interface EventI {
-    type: EKey
+    type: string
 }
-interface EventRegistry {}
-type EKey = keyof EventRegistry
-type Event<T extends EKey> = EventRegistry[T]
+/**
+ * Event Registry
+ */
+export interface EventRegistry {}
+type ER = EventRegistry
+export type EKey = keyof ER
+export type Event<T extends EventI> = T extends ER[infer K extends keyof ER] ? ER[K] : EventI
+
 type Listener<T> = { listener: (event: T) => void; priority: number }
 /**
  * A generic EventEmitter class that allows subscribing to and emitting events.
  *
  * @template E - A record type where keys are event names and values are the event payload types.
  */
-class EventEmitter<E extends Record<string, unknown>> {
+class EventEmitter<E> {
     /**
      * A private object that holds arrays of listeners for each event type.
      */
@@ -33,6 +37,24 @@ class EventEmitter<E extends Record<string, unknown>> {
         if (!this.listeners[type]) this.listeners[type] = []
         this.listeners[type]!.push({ listener, priority })
         this.listeners[type]!.sort((a, b) => b.priority - a.priority)
+    }
+
+    /**
+     * Registers a one-time event listener for the specified event type.
+     * The listener is invoked at most once after being added. If the event is emitted,
+     * the listener is removed immediately after being called.
+     *
+     * @template K - The type of the event.
+     * @param type - The name of the event to listen for.
+     * @param listener - The callback function to execute when the event is emitted.
+     * @param priority - The priority of the listener. Higher priority listeners are called first. Default is 0.
+     */
+    once<K extends keyof E>(type: K, listener: (event: E[K]) => void, priority = 0) {
+        const onceListener = (e: E[K]) => {
+            listener(e)
+            this.off(type, onceListener)
+        }
+        this.on(type, onceListener, priority)
     }
 
     /**
@@ -61,8 +83,13 @@ class EventEmitter<E extends Record<string, unknown>> {
     }
 }
 
+// TODO: complete a couple event systems
+
 export function initEvents(hex: Hex) {
     hex.log.debug('EVENTS: Initialized.')
 
-    const events: Record<EKey, EventI> = {}
+    // const events: Record<EKey, EventI> = {}
+    return {
+        events: new EventEmitter<ER>(),
+    }
 }
