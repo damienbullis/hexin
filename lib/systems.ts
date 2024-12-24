@@ -1,10 +1,7 @@
 import type { Hex } from './engine'
 import type { SKeys, System, SystemI } from './types'
 
-type AssertSystem = <K extends SKeys, T extends System<K>>(
-    s: SystemI,
-    type: K
-) => asserts s is T
+type AssertSystem = <K extends SKeys, T extends System<K>>(s: SystemI, type: K) => asserts s is T
 
 /**
  * Hex Systems Initializer
@@ -80,10 +77,7 @@ export function initSystems(hex: Hex) {
         for (const system of getSystems()) {
             dependencyCountMap.set(system, 0)
             for (const dependency of getDeps(system)) {
-                dependencyCountMap.set(
-                    dependency,
-                    (dependencyCountMap.get(dependency) || 0) + 1
-                )
+                dependencyCountMap.set(dependency, (dependencyCountMap.get(dependency) || 0) + 1)
             }
         }
 
@@ -101,10 +95,7 @@ export function initSystems(hex: Hex) {
             const system = queue.shift()!
             sortedSystems.push(system)
             for (const dependency of getDeps(system)) {
-                dependencyCountMap.set(
-                    dependency,
-                    (dependencyCountMap.get(dependency) || 0) - 1
-                )
+                dependencyCountMap.set(dependency, (dependencyCountMap.get(dependency) || 0) - 1)
                 if ((dependencyCountMap.get(dependency) || 0) === 0) {
                     queue.push(dependency)
                 }
@@ -113,10 +104,7 @@ export function initSystems(hex: Hex) {
 
         // Check for cycles
         const allSystems = getSystems()
-        if (
-            sortedSystems.length !== allSystems.length ||
-            hasCycle(allSystems)
-        ) {
+        if (sortedSystems.length !== allSystems.length || hasCycle(allSystems)) {
             throw new SystemError('CYCLE')
         }
 

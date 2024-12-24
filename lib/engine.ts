@@ -2,20 +2,20 @@ import type { HexConfig } from './types'
 import { initEntities } from './entities'
 import { initSystems } from './systems'
 import { initUtils } from './utils'
-// import { initEvents } from './events'
+import { initEvents } from './events'
 
-type HexUtils = ReturnType<typeof initUtils>
 type HexLog = HexUtils['log']
+type HexUtils = ReturnType<typeof initUtils>
 type HexEntities = ReturnType<typeof initEntities>
 type HexSystems = ReturnType<typeof initSystems>
-// type HexEvents = ReturnType<typeof initEvents>
+type HexEvents = ReturnType<typeof initEvents>
 
 class Hex {
     log: HexLog
     systems: HexSystems
     entities: HexEntities
     utils: Omit<HexUtils, 'log'>
-    // events: HexEvents
+    events: HexEvents
     constructor(c: Partial<HexConfig> = {}) {
         const { log, config, errors } = initUtils(c)
         this.log = log
@@ -23,8 +23,7 @@ class Hex {
 
         this.systems = initSystems(this)
         this.entities = initEntities(this)
-
-        // NEXT: Events
+        this.events = initEvents(this)
     }
 }
 
