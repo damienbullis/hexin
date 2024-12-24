@@ -8,6 +8,7 @@ const DEFAULT: HexConfig = {
         outputs: [{ output: { write: console.log } }],
     },
     rng_seed: 0,
+    tick_rate: 60,
 }
 
 export function initUtils(c: Partial<HexConfig>) {
