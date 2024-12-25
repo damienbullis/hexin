@@ -1,4 +1,4 @@
-import type { Hex } from '../engine'
+import type { Hex } from '..'
 
 export class Timer {
     private startTimes: Map<string, number> = new Map()

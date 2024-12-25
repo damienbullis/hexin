@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { initComponents } from '../entities'
-import { Hex } from '../engine'
+import { Hex } from '..'
 import { LogLevel } from '../utils/log'
 // import type { Component } from './types'
 

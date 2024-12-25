@@ -1,4 +1,4 @@
-import type { Hex } from './engine'
+import type { Hex } from '.'
 import type { SKeys, System, SystemI } from './types'
 
 type AssertSystem = <K extends SKeys, T extends System<K>>(s: SystemI, type: K) => asserts s is T

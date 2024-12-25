@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from 'bun:test'
 import { initEvents } from '../events'
-import { Hex } from '../engine'
+import { Hex } from '..'
 import { LogLevel } from '../utils/log'
 
 const hexOptions = {

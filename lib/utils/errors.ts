@@ -1,4 +1,4 @@
-import type { Hex } from '../engine'
+import type { Hex } from '..'
 
 type ErrorDomainTypes = 'System' | 'Entity' | 'Event'
 

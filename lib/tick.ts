@@ -1,4 +1,4 @@
-import type { Hex } from './engine'
+import type { Hex } from '.'
 
 export function initEngine(hex: Hex) {
     const tickRate = hex.utils.config.tick_rate

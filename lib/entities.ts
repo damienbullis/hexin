@@ -1,4 +1,4 @@
-import type { Hex } from './engine'
+import type { Hex } from '.'
 import type { CKeys, Component, ComponentI } from './types'
 
 type Entity = number

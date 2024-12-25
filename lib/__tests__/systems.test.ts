@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Hex } from '../engine'
+import { Hex } from '..'
 import type { SystemI } from '../types'
 import { initSystems } from '../systems'
 

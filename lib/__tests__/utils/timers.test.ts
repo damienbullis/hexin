@@ -1,7 +1,7 @@
 import { describe, expect, it, jest } from 'bun:test'
 
 import { Timer } from '../../timers'
-import { Hex } from '../../engine'
+import { Hex } from '../..'
 import { LogLevel } from '../../utils/log'
 const options = {
     log_options: { level: LogLevel.DEBUG, outputs: [{ output: { write() {} } }] },
