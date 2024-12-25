@@ -1,5 +1,5 @@
 import type { HexConfig } from './types'
-import { initComponents } from './entities'
+import { initComponents } from './components'
 import { initSystems } from './systems'
 import { initUtils, Timer } from './utils'
 import { initEvents } from './events'
