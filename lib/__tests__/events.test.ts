@@ -21,7 +21,7 @@ const hexOptions = {
 
 describe('Events', () => {
     const hex = new Hex(hexOptions)
-    const { events } = initEvents(hex)
+    const events = initEvents(hex)
 
     it('can register and emit an event', () => {
         const mockListener = jest.fn()
@@ -29,7 +29,11 @@ describe('Events', () => {
         events.on('testEvent', mockListener)
         // @ts-expect-error - no events registered
         events.emit('testEvent', { type: 'testEvent' })
-        expect(mockListener).toHaveBeenCalled()
+        expect(mockListener).toHaveBeenCalledTimes(0)
+
+        events.processEvents()
+
+        expect(mockListener).toHaveBeenCalledTimes(1)
     })
 
     it('can register a one-time event listener', () => {
@@ -40,6 +44,10 @@ describe('Events', () => {
         events.emit('testEvent', { type: 'testEvent' })
         // @ts-expect-error - no events registered
         events.emit('testEvent', { type: 'testEvent' })
+        expect(mockListener).toHaveBeenCalledTimes(0)
+
+        events.processEvents()
+
         expect(mockListener).toHaveBeenCalledTimes(1)
     })
 
@@ -51,6 +59,10 @@ describe('Events', () => {
         events.off('testEvent', mockListener)
         // @ts-expect-error - no events registered
         events.emit('testEvent', { type: 'testEvent' })
+        expect(mockListener).not.toHaveBeenCalled()
+
+        events.processEvents()
+
         expect(mockListener).not.toHaveBeenCalled()
     })
 })
