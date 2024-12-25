@@ -7,6 +7,7 @@ export interface ComponentRegistry {}
 export interface SystemI {
     _type: SKeys | string
     run(delta: number): void
+    render?(interpolation: number): void
 }
 export interface ComponentI {
     _type: CKeys | string

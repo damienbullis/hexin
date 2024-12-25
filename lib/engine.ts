@@ -3,14 +3,14 @@ import { initComponents } from './entities'
 import { initSystems } from './systems'
 import { initUtils, Timer } from './utils'
 import { initEvents } from './events'
-import { initTick } from './tick'
+import { initEngine } from './tick'
 
 type HexLog = HexUtils['log']
 type HexUtils = ReturnType<typeof initUtils>
 type HexEntities = ReturnType<typeof initComponents>
 type HexSystems = ReturnType<typeof initSystems>
 type HexEvents = ReturnType<typeof initEvents>
-type HexTick = ReturnType<typeof initTick>
+type HexEngine = ReturnType<typeof initEngine>
 
 class Hex {
     log: HexLog
@@ -22,13 +22,25 @@ class Hex {
         timer: Timer
     }
     events: HexEvents
-    tick: HexTick
+    // Engine
+    count: HexEngine['count']
+    start: HexEngine['start']
+    stop: HexEngine['stop']
+    pause: HexEngine['pause']
+    resume: HexEngine['resume']
 
     constructor(c: Partial<HexConfig> = {}) {
         const { log, config, errors } = initUtils(c)
         this.log = log
-        this.tick = initTick(this)
-        this.utils = { config, errors, timer: new Timer(this, () => this.tick.count) }
+
+        const { count, start, stop, pause, resume } = initEngine(this)
+        this.count = count
+        this.start = start
+        this.stop = stop
+        this.pause = pause
+        this.resume = resume
+
+        this.utils = { config, errors, timer: new Timer(this, () => this.count) }
 
         this.systems = initSystems(this)
         this.entities = initComponents(this)

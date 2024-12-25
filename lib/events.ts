@@ -87,8 +87,16 @@ class EventEmitter<E> {
 
 export function initEvents(hex: Hex) {
     hex.log.debug('HEX: Events Initialized.')
+    const events = new EventEmitter<ER>()
+
+    const processEvents = () => {
+        // TODO: Implement event processing ?
+        // Right now this is just an event emitter with on, once, off, and emit
+    }
+
+    // NEXT: Should I add other event systems here? Network, Input, etc?
     return {
-        events: new EventEmitter<ER>(),
-        // NEXT: Should I add other event systems here? Network, Input, etc?
+        events,
+        processEvents,
     }
 }
