@@ -13,8 +13,8 @@ export interface EventRegistry {}
 type ER = EventRegistry
 export type EKey = keyof ER
 export type Event<T extends EventI> = T extends ER[infer K extends keyof ER] ? ER[K] : EventI
-
 type Listener<T> = { listener: (event: T) => void; priority: number }
+
 /**
  * A generic EventEmitter class that allows subscribing to and emitting events.
  *
@@ -24,7 +24,8 @@ class EventEmitter<E> {
     /**
      * A private object that holds arrays of listeners for each event type.
      */
-    private listeners: { [K in keyof E]?: Array<Listener<E[K]>> } = {}
+    private listeners: { [K in keyof E]?: Listener<E[K]>[] } = {}
+    private eventQueue: E[keyof E][] = []
 
     /**
      * Registers a listener for a specific event type.
@@ -77,26 +78,43 @@ class EventEmitter<E> {
      */
     emit<K extends keyof E>(type: K, event: E[K]) {
         if (!this.listeners[type]) return
-        for (const l of this.listeners[type]!) {
-            l.listener(event)
+        this.eventQueue.push(event)
+    }
+
+    /**
+     * Processes all events in the event queue.
+     */
+    processEvents() {
+        while (this.eventQueue.length) {
+            const event = this.eventQueue.shift()!
+
+            // NEXT: Fix these type cast
+            assertEvent(event)
+            const listeners = this.listeners[event.type as keyof E]
+            if (!listeners) continue
+            for (const l of listeners) {
+                l.listener(event)
+            }
         }
     }
 }
 
-// TODO: complete a couple event systems
+function assertEvent(_: unknown): asserts _ is EventI {}
 
 export function initEvents(hex: Hex) {
-    hex.log.debug('HEX: Events Initialized.')
     const events = new EventEmitter<ER>()
+    const on = events.on.bind(events)
+    const once = events.once.bind(events)
+    const off = events.off.bind(events)
+    const emit = events.emit.bind(events)
+    const processEvents = events.processEvents.bind(events)
 
-    const processEvents = () => {
-        // TODO: Implement event processing ?
-        // Right now this is just an event emitter with on, once, off, and emit
-    }
-
-    // NEXT: Should I add other event systems here? Network, Input, etc?
+    hex.log.debug('HEX: Events Initialized.')
     return {
-        events,
+        on,
+        once,
+        off,
+        emit,
         processEvents,
     }
 }
