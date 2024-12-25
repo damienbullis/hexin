@@ -7,7 +7,7 @@ import { initEngine } from './engine'
 
 type HexLog = HexUtils['log']
 type HexUtils = ReturnType<typeof initUtils>
-type HexEntities = ReturnType<typeof initComponents>
+type HexComponents = ReturnType<typeof initComponents>
 type HexSystems = ReturnType<typeof initSystems>
 type HexEvents = ReturnType<typeof initEvents>
 type HexEngine = ReturnType<typeof initEngine>
@@ -15,14 +15,13 @@ type HexEngine = ReturnType<typeof initEngine>
 class Hex {
     log: HexLog
     systems: HexSystems
-    entities: HexEntities
+    components: HexComponents
     utils: {
         config: HexConfig
         errors: HexUtils['errors']
         timer: Timer
     }
     events: HexEvents
-    // Engine
     count: HexEngine['count']
     start: HexEngine['start']
     stop: HexEngine['stop']
@@ -32,6 +31,7 @@ class Hex {
     constructor(c: Partial<HexConfig> = {}) {
         const { log, config, errors } = initUtils(c)
         this.log = log
+        this.utils = { config, errors, timer: new Timer(this, () => this.count) }
 
         const { count, start, stop, pause, resume } = initEngine(this)
         this.count = count
@@ -40,10 +40,8 @@ class Hex {
         this.pause = pause
         this.resume = resume
 
-        this.utils = { config, errors, timer: new Timer(this, () => this.count) }
-
         this.systems = initSystems(this)
-        this.entities = initComponents(this)
+        this.components = initComponents(this)
         this.events = initEvents(this)
     }
 }

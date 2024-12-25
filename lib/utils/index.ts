@@ -13,7 +13,12 @@ const DEFAULT: HexConfig = {
 }
 
 export function initUtils(c: Partial<HexConfig>) {
-    const config = { ...DEFAULT, ...c }
+    const config: HexConfig = {
+        log_options: { ...DEFAULT.log_options, ...c.log_options },
+        rng_seed: c.rng_seed ?? DEFAULT.rng_seed,
+        tick_rate: c.tick_rate ?? DEFAULT.tick_rate,
+        enable_rendering: c.enable_rendering ?? DEFAULT.enable_rendering,
+    }
     const log = initLog(config.log_options)
     const makeErrors = initErrors(log)
     const utils = {
