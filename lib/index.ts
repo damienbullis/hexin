@@ -3,7 +3,7 @@ import { initComponents } from './entities'
 import { initSystems } from './systems'
 import { initUtils, Timer } from './utils'
 import { initEvents } from './events'
-import { initEngine } from './tick'
+import { initEngine } from './engine'
 
 type HexLog = HexUtils['log']
 type HexUtils = ReturnType<typeof initUtils>
