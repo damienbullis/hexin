@@ -21,6 +21,7 @@ export type HexConfig = {
     log_options: LoggerOptions
     rng_seed: number
     tick_rate: number
+    enable_rendering: boolean
 }
 
 // type RegisterSystem<T extends SystemI> = {

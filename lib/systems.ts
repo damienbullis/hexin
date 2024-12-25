@@ -116,7 +116,7 @@ export function initSystems(hex: Hex) {
         return systems
     }
 
-    hex.log.debug('SYSTEMS: Initialized.')
+    hex.log.debug('HEX: Systems Initialized.')
     return {
         /**
          * Add a system to the engine

@@ -1,12 +1,9 @@
 import type { Hex } from './engine'
 import type { CKeys, Component, ComponentI } from './types'
 
-// TODO: Add deferred system for interfacing with entities to avoid changing state during system execution.
-// Defer changes to the end of the frame.
-
 type Entity = number
 
-export function initEntities(hex: Hex) {
+export function initComponents(hex: Hex) {
     const EntityError = hex.utils.errors.entity
 
     const componentEntityMap: Record<string, Entity[]> = {}
@@ -49,7 +46,7 @@ export function initEntities(hex: Hex) {
         map.splice(mapIdx, 1)
     }
 
-    hex.log.debug('ENTITIES: Initialized.')
+    hex.log.debug('HEX: Components Initialized.')
     return {
         /**
          * Create a new entity

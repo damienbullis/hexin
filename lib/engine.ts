@@ -1,14 +1,13 @@
 import type { HexConfig } from './types'
-import { initEntities } from './entities'
+import { initComponents } from './entities'
 import { initSystems } from './systems'
-import { initUtils } from './utils'
+import { initUtils, Timer } from './utils'
 import { initEvents } from './events'
-import { Timer } from './timers'
 import { initTick } from './tick'
 
 type HexLog = HexUtils['log']
 type HexUtils = ReturnType<typeof initUtils>
-type HexEntities = ReturnType<typeof initEntities>
+type HexEntities = ReturnType<typeof initComponents>
 type HexSystems = ReturnType<typeof initSystems>
 type HexEvents = ReturnType<typeof initEvents>
 type HexTick = ReturnType<typeof initTick>
@@ -32,7 +31,7 @@ class Hex {
         this.utils = { config, errors, timer: new Timer(this, () => this.tick.count) }
 
         this.systems = initSystems(this)
-        this.entities = initEntities(this)
+        this.entities = initComponents(this)
         this.events = initEvents(this)
     }
 }

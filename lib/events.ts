@@ -86,10 +86,9 @@ class EventEmitter<E> {
 // TODO: complete a couple event systems
 
 export function initEvents(hex: Hex) {
-    hex.log.debug('EVENTS: Initialized.')
-
-    // const events: Record<EKey, EventI> = {}
+    hex.log.debug('HEX: Events Initialized.')
     return {
         events: new EventEmitter<ER>(),
+        // NEXT: Should I add other event systems here? Network, Input, etc?
     }
 }

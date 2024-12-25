@@ -9,6 +9,7 @@ const DEFAULT: HexConfig = {
     },
     rng_seed: 0,
     tick_rate: 60,
+    enable_rendering: false,
 }
 
 export function initUtils(c: Partial<HexConfig>) {
@@ -24,6 +25,8 @@ export function initUtils(c: Partial<HexConfig>) {
             event: makeErrors('Event'),
         },
     }
-    log.debug('UTILS: Initialized.', utils)
+    log.debug('HEX: Utilities Initialized.', utils)
     return utils
 }
+
+export { Timer } from './timers'

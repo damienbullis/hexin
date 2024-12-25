@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { initEntities } from '../entities'
+import { initComponents } from '../entities'
 import { Hex } from '../engine'
 import { LogLevel } from '../utils/log'
 // import type { Component } from './types'
@@ -12,7 +12,7 @@ const hexOptions = {
 }
 describe('Entities', () => {
     const hex = new Hex(hexOptions)
-    const entities = initEntities(hex)
+    const entities = initComponents(hex)
 
     it('can create an entity', () => {
         const id = entities.create()
@@ -20,15 +20,9 @@ describe('Entities', () => {
     })
 
     it('can delete an entity', () => {
-        expect(
-            () => entities.delete(1),
-            'cannot delete an entity that does not exist'
-        ).toThrow()
+        expect(() => entities.delete(1), 'cannot delete an entity that does not exist').toThrow()
         expect(entities.all()[0]).toBeDefined()
-        expect(
-            entities.delete(0),
-            'can delete an entity that does exist'
-        ).toBeUndefined()
+        expect(entities.delete(0), 'can delete an entity that does exist').toBeUndefined()
         expect(entities.all()[0]).toBeUndefined()
     })
 
