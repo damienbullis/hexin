@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from 'bun:test'
-import { profiler } from '../../utils/profiler'
+import { profiler } from '../profiler'
 
 describe('profiler', () => {
     const writer = jest.fn((s) => s)

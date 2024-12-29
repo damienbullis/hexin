@@ -1,6 +1,6 @@
 import type { Hex } from '.'
 
-export function initErrors(log: Hex['log']) {
+export function initErrors(hex: Hex) {
     const errors = {
         TYPE_MISMATCH: 'Type Mismatch',
         EXISTS: 'Already Exists',
@@ -14,7 +14,7 @@ export function initErrors(log: Hex['log']) {
                 const msgEnd = message ? `: ${message}` : ''
                 super(`${errors[type]}${msgEnd}`)
                 this.name = `Hex${name}Error`
-                log.error(this.message)
+                hex.log.error(this.message)
             }
         }
     }

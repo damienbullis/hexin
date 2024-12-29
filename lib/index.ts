@@ -7,6 +7,7 @@ import { initEngine } from './engine'
 import { initConfig } from './config'
 import { initErrors } from './errors'
 import { initLog } from './log'
+import { HexTimer } from './timers'
 
 type HexComponents = ReturnType<typeof initComponents>
 type HexSystems = ReturnType<typeof initSystems>
@@ -18,11 +19,12 @@ type HexErrors = ReturnType<typeof initErrors>
 type HexLog = ReturnType<typeof initLog>
 
 class Hex {
-    log: HexLog
     components: HexComponents
     systems: HexSystems
     events: HexEvents
     engine: HexEngine
+    log: HexLog
+
     utils: {
         config: HexConfig
         errors: HexErrors
@@ -35,7 +37,7 @@ class Hex {
         this.engine = initEngine(this)
 
         this.utils.errors = initErrors(this)
-        this.utils.timer = new HexTimer(this, () => this.engine.getCount())
+        this.utils.timer = new HexTimer(this)
 
         this.systems = initSystems(this)
         this.components = initComponents(this)

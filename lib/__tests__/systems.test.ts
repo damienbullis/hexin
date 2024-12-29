@@ -3,7 +3,7 @@ import { Hex } from '..'
 import type { SystemI } from '../types'
 import { initSystems } from '../systems'
 
-import { LogLevel } from '../utils/log'
+import { LogLevel } from '../log'
 
 const createSystem = (type: string) => {
     return class implements SystemI {

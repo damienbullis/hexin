@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'bun:test'
 import { Hex } from '..'
-import { LogLevel } from '../utils/log'
+import { LogLevel } from '../log'
 
 const hexOptions = {
     log_options: {

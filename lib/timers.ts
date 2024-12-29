@@ -2,11 +2,9 @@ import type { Hex } from '.'
 
 export class HexTimer {
     private startTimes: Map<string, number> = new Map()
+    private simulationTick = () => this.hex.engine.getCount()
 
-    constructor(
-        private hex: Hex,
-        private simulationTick: () => number
-    ) {}
+    constructor(private hex: Hex) {}
 
     start<T extends string>(label: T): () => void {
         this.startTimes.set(label, this.simulationTick())

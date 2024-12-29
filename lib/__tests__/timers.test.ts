@@ -1,8 +1,8 @@
 import { describe, expect, it, jest } from 'bun:test'
 
-import { HexTimer } from '../../timers'
+import { HexTimer } from '../timers'
 import { LogLevel } from '../../utils/log'
-import { Hex } from '../..'
+import { Hex } from '..'
 
 describe('Timer', () => {
     const hex = new Hex({

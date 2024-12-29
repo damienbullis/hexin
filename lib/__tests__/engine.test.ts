@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
 import { Hex } from '..'
-import { LogLevel } from '../utils/log'
+import { LogLevel } from '../log'
 
 describe('Engine', () => {
     let hex: Hex
