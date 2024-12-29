@@ -1,4 +1,4 @@
-import type { Hex } from '..'
+import type { Hex } from '.'
 
 export class HexTimer {
     private startTimes: Map<string, number> = new Map()

@@ -1,4 +1,4 @@
-import type { Hex } from '..'
+import type { Hex } from '.'
 
 export function initErrors(log: Hex['log']) {
     const errors = {

@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from 'bun:test'
 
-import { HexTimer } from '../../utils/timers'
+import { HexTimer } from '../../timers'
 import { LogLevel } from '../../utils/log'
 import { Hex } from '../..'
 

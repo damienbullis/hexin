@@ -1,6 +1,6 @@
 import { initLog, LogLevel } from './log'
 import type { HexConfig } from '../types'
-import { initErrors } from './errors'
+import { initErrors } from '../errors'
 
 const DEFAULT: HexConfig = {
     log_options: {
@@ -37,4 +37,4 @@ export function initUtils(c: Partial<HexConfig>) {
     return utils
 }
 
-export { HexTimer } from './timers'
+export { HexTimer } from '../timers'
