@@ -41,16 +41,10 @@ export enum LogLevel {
 class Log implements Logger {
     constructor(private options: LoggerOptions) {}
 
-    private log(
-        level: LogLevel,
-        message: string,
-        meta?: Record<string, any>
-    ): void {
+    private log(level: LogLevel, message: string, meta?: Record<string, any>): void {
         if (this.shouldLog(level)) {
             for (const opt of this.options.outputs) {
-                const timestamp = opt.timestamp
-                    ? opt.timestamp()
-                    : new Date().toISOString()
+                const timestamp = opt.timestamp ? opt.timestamp() : new Date().toISOString()
 
                 const logMessage: LogMessage = {
                     level,
@@ -88,12 +82,7 @@ class Log implements Logger {
     }
 
     private shouldLog(level: LogLevel): boolean {
-        const levels = [
-            LogLevel.DEBUG,
-            LogLevel.INFO,
-            LogLevel.WARN,
-            LogLevel.ERROR,
-        ]
+        const levels = [LogLevel.DEBUG, LogLevel.INFO, LogLevel.WARN, LogLevel.ERROR]
         return levels.indexOf(level) >= levels.indexOf(this.options.level)
     }
 }

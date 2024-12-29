@@ -21,8 +21,11 @@ export type Component<K extends CKeys = CKeys> = ComponentRegistry[K]
 export type HexConfig = {
     log_options: LoggerOptions
     rng_seed: number
-    tick_rate: number
+    // tick_rate: number
+    tick_interval: number
     enable_rendering: boolean
+    interval_fn: (next: (delta: number) => void) => void
+    max_ticks: number | undefined
 }
 
 // type RegisterSystem<T extends SystemI> = {

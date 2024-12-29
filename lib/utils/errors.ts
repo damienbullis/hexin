@@ -1,6 +1,6 @@
 import type { Hex } from '..'
 
-type ErrorDomainTypes = 'System' | 'Entity' | 'Event'
+type ErrorDomainTypes = 'System' | 'Component' | 'Event'
 
 export function initErrors(log: Hex['log']) {
     const errors = {

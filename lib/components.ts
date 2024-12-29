@@ -1,10 +1,13 @@
 import type { Hex } from '.'
 import type { CKeys, Component, ComponentI } from './types'
 
+/**
+ * Entities are just the index of the entity in the entities array.
+ */
 type Entity = number
 
 export function initComponents(hex: Hex) {
-    const EntityError = hex.utils.errors.entity
+    const ComponentError = hex.utils.errors.component
 
     const componentEntityMap: Record<string, Entity[]> = {}
     const entities: Array<ComponentI[]> = []
@@ -13,7 +16,7 @@ export function initComponents(hex: Hex) {
 
     const assertComponent: AssertComponent = (comp, type) => {
         if (comp._type !== type) {
-            throw new EntityError('TYPE_MISMATCH', `${comp._type} !== ${type}`)
+            throw new ComponentError('TYPE_MISMATCH', `${comp._type} !== ${type}`)
         }
     }
 
@@ -21,7 +24,7 @@ export function initComponents(hex: Hex) {
         const key = component._type
         const map = componentEntityMap[key]
         if (entities[entity]!.find((c) => c._type === key))
-            throw new EntityError('EXISTS', `${entity} already has component ${key}`)
+            throw new ComponentError('EXISTS', `${entity} already has component ${key}`)
         if (!map) {
             componentEntityMap[key] = [entity]
         } else {
@@ -32,16 +35,16 @@ export function initComponents(hex: Hex) {
 
     const removeComponent = (entity: Entity, type: CKeys) => {
         const ent = entities[entity]
-        if (!ent) throw new EntityError('NOT_FOUND', `${entity}`)
+        if (!ent) throw new ComponentError('NOT_FOUND', `${entity}`)
         const map = componentEntityMap[type]
-        if (!map) throw new EntityError('NOT_FOUND', `${type} in component entity map`)
+        if (!map) throw new ComponentError('NOT_FOUND', `${type} in component entity map`)
         const idx = ent.findIndex((c) => c._type === type)
-        if (idx === -1) throw new EntityError('NOT_FOUND', `${entity} does not have ${type}`)
+        if (idx === -1) throw new ComponentError('NOT_FOUND', `${entity} does not have ${type}`)
         // Remove component from entity
         ent.splice(idx, 1)
 
         const mapIdx = map.indexOf(entity)
-        if (mapIdx === -1) throw new EntityError('NOT_FOUND', `${entity}`)
+        if (mapIdx === -1) throw new ComponentError('NOT_FOUND', `${entity}`)
         // Remove entity from component map
         map.splice(mapIdx, 1)
     }
@@ -60,13 +63,13 @@ export function initComponents(hex: Hex) {
          * Delete an entity
          */
         delete(entity: Entity) {
-            if (!entities[entity]) throw new EntityError('NOT_FOUND', `${entity}`)
+            if (!entities[entity]) throw new ComponentError('NOT_FOUND', `${entity}`)
             for (const comp of entities[entity]) {
                 const key = comp._type
                 const map = componentEntityMap[key]
-                if (!map) throw new EntityError('NOT_FOUND', `${key} in component entity map`)
+                if (!map) throw new ComponentError('NOT_FOUND', `${key} in component entity map`)
                 const idx = map.indexOf(entity)
-                if (idx === -1) throw new EntityError('NOT_FOUND', `${entity}`)
+                if (idx === -1) throw new ComponentError('NOT_FOUND', `${entity}`)
 
                 map.splice(idx, 1)
             }
@@ -77,7 +80,7 @@ export function initComponents(hex: Hex) {
          * Add a component or components to an entity
          */
         add(entity: Entity, components: ComponentI | Array<ComponentI>) {
-            if (!entities[entity]) throw new EntityError('NOT_FOUND', `${entity}`)
+            if (!entities[entity]) throw new ComponentError('NOT_FOUND', `${entity}`)
             if (Array.isArray(components)) {
                 for (const component of components) {
                     addComponent(entity, component)
@@ -105,9 +108,9 @@ export function initComponents(hex: Hex) {
          */
         get<K extends CKeys>(entity: Entity, type: K): Component<K> {
             const ent = entities[entity]
-            if (!ent) throw new EntityError('NOT_FOUND', `${entity}`)
+            if (!ent) throw new ComponentError('NOT_FOUND', `${entity}`)
             const c = ent.find((c) => c._type === type)
-            if (!c) throw new EntityError('NOT_FOUND', type)
+            if (!c) throw new ComponentError('NOT_FOUND', type)
 
             assertComponent(c, type)
             return c

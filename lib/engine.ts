@@ -1,26 +1,29 @@
 import type { Hex } from '.'
 
 export function initEngine(hex: Hex) {
-    const tickRate = hex.utils.config.tick_rate
+    // const tickRate = hex.utils.config.tick_rate
     const enableRendering = hex.utils.config.enable_rendering
-    const tickInterval = 1 / tickRate
+    const intervalFn = hex.utils.config.interval_fn
+    const maxTicks = hex.utils.config.max_ticks
+    const tickInterval = hex.utils.config.tick_interval
     let tickTimeSinceLastUpdate = 0
     let running = false
     let count = 0 // tick count
     let paused = false
 
-    const start = (totalTicks?: number) => {
+    const start = () => {
         running = true
         tickTimeSinceLastUpdate = 0
         count = 0
+
+        // Start the game loop
+        intervalFn(logicLoop)
+        // logicLoop(totalTicks)
 
         if (enableRendering) {
             // client side (browser) rendering
             requestAnimationFrame(renderLoop)
         }
-
-        // Start the game loop
-        logicLoop(totalTicks)
     }
 
     const stop = () => {
@@ -28,11 +31,7 @@ export function initEngine(hex: Hex) {
     }
 
     const pause = () => {
-        paused = true
-    }
-
-    const resume = () => {
-        paused = false
+        paused = !paused
     }
 
     const update = (delta: number) => {
@@ -47,31 +46,32 @@ export function initEngine(hex: Hex) {
         hex.events.processEvents()
     }
 
-    const logicLoop = (totalTicks?: number) => {
-        if (!running) return
+    const logicLoop = (delta: number) => {
+        if (!running || paused) return
 
-        // If paused, skip the update
-        if (paused) {
-            tickTimeSinceLastUpdate += tickInterval
-            logicLoop(totalTicks)
-        }
+        // // If paused, skip the update
+        // if (paused) {
+        //     tickTimeSinceLastUpdate += tickInterval
+        //     logicLoop(totalTicks)
+        // }
 
         // Stop the loop
-        if (totalTicks !== undefined && count >= totalTicks) {
+        if (maxTicks !== undefined && count >= maxTicks) {
             stop()
             return
         }
 
         // Perform game logic update
-        update(tickInterval)
+        update(delta)
 
         // Update tick counts
         tickTimeSinceLastUpdate = 0
         count++
 
         // Recursively call the logic loop for the next tick
-        tickTimeSinceLastUpdate += tickInterval
-        logicLoop(totalTicks)
+        tickTimeSinceLastUpdate += delta
+        // logicLoop(totalTicks)
+        hex.log.debug(`TICK: ${count}`)
     }
 
     const render = (interpolation: number) => {
@@ -86,17 +86,19 @@ export function initEngine(hex: Hex) {
         // Perform rendering logic (interpolated for smoother visuals)
         const interpolation = tickTimeSinceLastUpdate / tickInterval
         render(interpolation)
+        hex.log.debug(`RENDER: ${count}`)
 
         // Schedule the next frame
         requestAnimationFrame(renderLoop)
     }
+    const getCount = () => count
 
-    hex.log.debug('HEX: Tick Initialized.')
+    hex.log.debug('HEX: Engine Initialized.')
     return {
         /**
          * The current tick count
          */
-        count,
+        getCount,
         /**
          * Start the game loop
          */
@@ -109,9 +111,5 @@ export function initEngine(hex: Hex) {
          * Pause the game loop
          */
         pause,
-        /**
-         * Resume the game loop
-         */
-        resume,
     }
 }
