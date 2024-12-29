@@ -34,18 +34,6 @@ export function initEngine(hex: Hex) {
         paused = !paused
     }
 
-    const update = (delta: number) => {
-        // Update game logic
-        for (const system of hex.systems.all()) {
-            system.run(delta)
-        }
-        // Possibly need to process entities here as well...
-        // Though, I think that's more of a system thing...
-
-        // Process events for this tick
-        hex.events.processEvents()
-    }
-
     const logicLoop = (delta: number) => {
         if (!running || paused) return
 
@@ -61,8 +49,13 @@ export function initEngine(hex: Hex) {
             return
         }
 
-        // Perform game logic update
-        update(delta)
+        // Update game logic
+        for (const system of hex.systems.all()) {
+            system.run(delta)
+        }
+
+        // Process events for this tick
+        hex.events.processEvents()
 
         // Update tick counts
         tickTimeSinceLastUpdate = 0
@@ -74,18 +67,14 @@ export function initEngine(hex: Hex) {
         hex.log.debug(`[TICK] ${count}`)
     }
 
-    const render = (interpolation: number) => {
-        for (const system of hex.systems.all()) {
-            if (system.render) system.render(interpolation)
-        }
-    }
-
     const renderLoop = () => {
         if (!running || !enableRendering) return
 
         // Perform rendering logic (interpolated for smoother visuals)
         const interpolation = tickTimeSinceLastUpdate / tickInterval
-        render(interpolation)
+        for (const system of hex.systems.all()) {
+            if (system.render) system.render(interpolation)
+        }
         hex.log.debug(`[RENDER] ${count}`)
 
         // Schedule the next frame
