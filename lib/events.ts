@@ -54,7 +54,6 @@ export function initEvents(hex: Hex) {
         }
     }
 
-    hex.log.debug('[HEX] Events Initialized.')
     return {
         on,
         off,

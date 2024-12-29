@@ -76,7 +76,6 @@ export function initEngine(hex: Hex) {
     }
     const getCount = () => count
 
-    hex.log.debug('[HEX] Engine Initialized.')
     return {
         /**
          * The current tick count
