@@ -37,12 +37,6 @@ export function initEngine(hex: Hex) {
     const logicLoop = (delta: number) => {
         if (!running || paused) return
 
-        // // If paused, skip the update
-        // if (paused) {
-        //     tickTimeSinceLastUpdate += tickInterval
-        //     logicLoop(totalTicks)
-        // }
-
         // Stop the loop
         if (maxTicks !== undefined && count >= maxTicks) {
             stop()

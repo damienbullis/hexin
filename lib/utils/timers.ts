@@ -13,7 +13,7 @@ export class HexTimer {
         return this.end.bind(this, label)
     }
 
-    private end(label: string): void {
+    end(label: string): void {
         const startTick = this.startTimes.get(label)
         if (startTick === undefined) throw new Error(`Timer not started: ${label}`)
         const elapsedTicks = this.simulationTick() - startTick

@@ -15,6 +15,7 @@ describe('Engine', () => {
             interval_fn: (next) => {
                 nextFn = next
             },
+            max_ticks: 1000,
         })
 
         hex = h
@@ -49,19 +50,21 @@ describe('Engine', () => {
 
     it('should pause & unpause', () => {
         nextFn(tick)
-        hex.engine.pause() // pause it
+        hex.engine.pause()
         nextFn(tick)
         expect(hex.engine.getCount()).toBe(1)
-        hex.engine.pause() // unpause it
+        hex.engine.pause() // unpause
         nextFn(tick)
         expect(hex.engine.getCount()).toBe(2)
     })
 
-    it('should run X number of times', () => {
+    it('should run until max ticks is reached', () => {
         const total = 1000
         for (let i = 0; i < total; i++) {
             nextFn(tick)
         }
+        expect(hex.engine.getCount()).toBe(total)
+        nextFn(tick)
         expect(hex.engine.getCount()).toBe(total)
     })
 })
