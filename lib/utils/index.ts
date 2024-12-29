@@ -37,4 +37,4 @@ export function initUtils(c: Partial<HexConfig>) {
     return utils
 }
 
-export { Timer } from './timers'
+export { HexTimer } from './timers'

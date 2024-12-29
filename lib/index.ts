@@ -1,9 +1,10 @@
 import type { HexConfig } from './types'
 import { initComponents } from './components'
 import { initSystems } from './systems'
-import { initUtils, Timer } from './utils'
+import { initUtils, HexTimer } from './utils'
 import { initEvents } from './events'
 import { initEngine } from './engine'
+import { env } from 'bun'
 
 type HexComponents = ReturnType<typeof initComponents>
 type HexSystems = ReturnType<typeof initSystems>
@@ -21,7 +22,7 @@ class Hex {
     utils: {
         config: HexConfig
         errors: HexUtils['errors']
-        timer: Timer
+        timer: HexTimer
     }
 
     constructor(c: Partial<HexConfig> = {}) {
@@ -29,9 +30,7 @@ class Hex {
         this.log = log
         this.utils = { config, errors, timer: null! }
         this.engine = initEngine(this)
-
-        const timer = new Timer(this, () => this.engine.getCount())
-        this.utils.timer = timer
+        this.utils.timer = new HexTimer(this, () => this.engine.getCount())
 
         this.systems = initSystems(this)
         this.components = initComponents(this)

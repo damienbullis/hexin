@@ -9,7 +9,7 @@ describe('Engine', () => {
     beforeEach(() => {
         const h = new Hex({
             log_options: {
-                outputs: [{ output: { write() {} } }],
+                outputs: [{ output: { write: console.log } }],
                 level: LogLevel.DEBUG,
             },
             interval_fn: (next) => {

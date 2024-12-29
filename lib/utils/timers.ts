@@ -1,6 +1,6 @@
 import type { Hex } from '..'
 
-export class Timer {
+export class HexTimer {
     private startTimes: Map<string, number> = new Map()
 
     constructor(
