@@ -26,7 +26,6 @@ const DEFAULT: HexConfig = {
 }
 
 export function initConfig(hex: Hex, c: Partial<HexConfig>): HexConfig {
-    hex.log.debug('[HEX] Config Initialized.')
     return {
         ...DEFAULT,
         ...c,

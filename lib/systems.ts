@@ -1,5 +1,13 @@
 import type { Hex } from '.'
-import type { SKeys, System, SystemI } from './types'
+
+export interface SystemI {
+    _type: SKeys | string
+    run(delta: number): void
+    render?(interpolation: number): void
+}
+export interface SystemRegistry {}
+export type SKeys = keyof SystemRegistry
+export type System<K extends SKeys = SKeys> = SystemRegistry[K]
 
 type AssertSystem = <K extends SKeys, T extends System<K>>(s: SystemI, type: K) => asserts s is T
 
@@ -7,7 +15,7 @@ type AssertSystem = <K extends SKeys, T extends System<K>>(s: SystemI, type: K) 
  * Hex Systems Initializer
  */
 export function initSystems(hex: Hex) {
-    const SystemError = hex.utils.errors.system
+    const { SystemError } = hex.utils.errors
     const systemMap: Record<string, SystemI> = {}
     const graph = new Map<SystemI, SystemI[]>()
     let isDirty = false

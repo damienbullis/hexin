@@ -1,5 +1,14 @@
 import type { Hex } from '.'
-import type { CKeys, Component, ComponentI } from './types'
+
+export interface ComponentRegistry {}
+
+// Base Interfaces
+export interface ComponentI {
+    _type: CKeys | string
+}
+
+export type CKeys = keyof ComponentRegistry
+export type Component<K extends CKeys = CKeys> = ComponentRegistry[K]
 
 /**
  * Entities are just the index of the entity in the entities array.
@@ -7,7 +16,7 @@ import type { CKeys, Component, ComponentI } from './types'
 type Entity = number
 
 export function initComponents(hex: Hex) {
-    const ComponentError = hex.utils.errors.component
+    const { ComponentError } = hex.utils.errors
 
     const componentEntityMap: Record<string, Entity[]> = {}
     const entities: Array<ComponentI[]> = []
