@@ -1,7 +1,5 @@
 import type { Hex } from '..'
 
-type ErrorDomainTypes = 'System' | 'Component' | 'Event'
-
 export function initErrors(log: Hex['log']) {
     const errors = {
         TYPE_MISMATCH: 'Type Mismatch',
@@ -10,13 +8,20 @@ export function initErrors(log: Hex['log']) {
         CYCLE: 'Cycle Detected',
     }
 
-    return (domain: ErrorDomainTypes) =>
-        class HexError extends Error {
+    const makeError = (name: string) => {
+        return class HexError extends Error {
             constructor(type: keyof typeof errors, message?: string) {
                 const msgEnd = message ? `: ${message}` : ''
                 super(`${errors[type]}${msgEnd}`)
-                this.name = `Hex${domain}`
+                this.name = `Hex${name}Error`
                 log.error(this.message)
             }
         }
+    }
+
+    return {
+        SystemError: makeError('System'),
+        ComponentError: makeError('Component'),
+        EventError: makeError('Event'),
+    }
 }

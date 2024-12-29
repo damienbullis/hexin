@@ -1,5 +1,3 @@
-import type { LoggerOptions } from './utils/log'
-
 export interface SystemRegistry {}
 export interface ComponentRegistry {}
 
@@ -17,16 +15,6 @@ export type System<K extends SKeys = SKeys> = SystemRegistry[K]
 
 export type CKeys = keyof ComponentRegistry
 export type Component<K extends CKeys = CKeys> = ComponentRegistry[K]
-
-export type HexConfig = {
-    log_options: LoggerOptions
-    rng_seed: number
-    // tick_rate: number
-    tick_interval: number
-    enable_rendering: boolean
-    interval_fn: (next: (delta: number) => void) => void
-    max_ticks: number | undefined
-}
 
 // type RegisterSystem<T extends SystemI> = {
 //     [K in T['_type']]: T
