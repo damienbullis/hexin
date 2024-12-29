@@ -43,7 +43,6 @@ export function initEvents(hex: Hex) {
     }
 
     const processEvents = () => {
-        const end = hex.utils.timer.start('events')
         while (queue.length) {
             const event = queue.shift()!
             const listeners = events[event.type]
@@ -53,10 +52,9 @@ export function initEvents(hex: Hex) {
                 l.listener(event)
             }
         }
-        end()
     }
 
-    hex.log.debug('HEX: Events Initialized.')
+    hex.log.debug('[HEX] Events Initialized.')
     return {
         on,
         off,

@@ -49,7 +49,7 @@ export function initComponents(hex: Hex) {
         map.splice(mapIdx, 1)
     }
 
-    hex.log.debug('HEX: Components Initialized.')
+    hex.log.debug('[HEX] Components Initialized.')
     return {
         /**
          * Create a new entity

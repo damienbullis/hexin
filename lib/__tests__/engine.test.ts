@@ -9,7 +9,7 @@ describe('Engine', () => {
     beforeEach(() => {
         const h = new Hex({
             log_options: {
-                outputs: [{ output: { write: console.log } }],
+                outputs: [{ output: { write: () => {} } }],
                 level: LogLevel.DEBUG,
             },
             interval_fn: (next) => {
@@ -55,5 +55,13 @@ describe('Engine', () => {
         hex.engine.pause() // unpause it
         nextFn(tick)
         expect(hex.engine.getCount()).toBe(2)
+    })
+
+    it('should run X number of times', () => {
+        const total = 1000
+        for (let i = 0; i < total; i++) {
+            nextFn(tick)
+        }
+        expect(hex.engine.getCount()).toBe(total)
     })
 })

@@ -33,7 +33,7 @@ export function initUtils(c: Partial<HexConfig>) {
             event: makeErrors('Event'),
         },
     }
-    log.debug('HEX: Utilities Initialized.')
+    log.debug('[HEX] Utilities Initialized.')
     return utils
 }
 

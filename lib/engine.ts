@@ -71,7 +71,7 @@ export function initEngine(hex: Hex) {
         // Recursively call the logic loop for the next tick
         tickTimeSinceLastUpdate += delta
         // logicLoop(totalTicks)
-        hex.log.debug(`TICK: ${count}`)
+        hex.log.debug(`[TICK] ${count}`)
     }
 
     const render = (interpolation: number) => {
@@ -86,14 +86,14 @@ export function initEngine(hex: Hex) {
         // Perform rendering logic (interpolated for smoother visuals)
         const interpolation = tickTimeSinceLastUpdate / tickInterval
         render(interpolation)
-        hex.log.debug(`RENDER: ${count}`)
+        hex.log.debug(`[RENDER] ${count}`)
 
         // Schedule the next frame
         requestAnimationFrame(renderLoop)
     }
     const getCount = () => count
 
-    hex.log.debug('HEX: Engine Initialized.')
+    hex.log.debug('[HEX] Engine Initialized.')
     return {
         /**
          * The current tick count
