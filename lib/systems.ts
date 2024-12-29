@@ -1,7 +1,7 @@
 import type { Hex } from '.'
 
 export interface SystemI {
-    _type: string
+    _type: SKeys
     run(delta: number): void
     render?(interpolation: number): void
 }

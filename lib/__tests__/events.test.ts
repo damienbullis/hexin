@@ -10,10 +10,10 @@ const hexOptions = {
     },
 }
 
-// To check if the types are working correctly uncomment the following:
+// // To check if the types are working correctly uncomment the following:
 // declare module '../events' {
-//     interface EventRegistry {
-//         testEvent: { type: 'testEvent' }
+//     export interface EventRegistry {
+//         testEvent: { _type: 'testEvent' }
 //     }
 // }
 
@@ -28,7 +28,7 @@ describe('Events', () => {
         // @ts-expect-error - no events registered
         events.on('testEvent', mockListener)
         // @ts-expect-error - no events registered
-        events.emit('testEvent', { type: 'testEvent' })
+        events.emit('testEvent', { _type: 'testEvent' })
         expect(mockListener).toHaveBeenCalledTimes(0)
 
         events.processEvents()
@@ -41,9 +41,9 @@ describe('Events', () => {
         // @ts-expect-error - no events registered
         events.once('testEvent', mockListener)
         // @ts-expect-error - no events registered
-        events.emit('testEvent', { type: 'testEvent' })
+        events.emit('testEvent', { _type: 'testEvent' })
         // @ts-expect-error - no events registered
-        events.emit('testEvent', { type: 'testEvent' })
+        events.emit('testEvent', { _type: 'testEvent' })
         expect(mockListener).toHaveBeenCalledTimes(0)
 
         events.processEvents()
@@ -58,7 +58,7 @@ describe('Events', () => {
         // @ts-expect-error - no events registered
         events.off('testEvent', mockListener)
         // @ts-expect-error - no events registered
-        events.emit('testEvent', { type: 'testEvent' })
+        events.emit('testEvent', { _type: 'testEvent' })
         expect(mockListener).not.toHaveBeenCalled()
 
         events.processEvents()

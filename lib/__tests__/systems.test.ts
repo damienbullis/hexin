@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import { Hex } from '..'
-import { initSystems, type SystemI } from '../systems'
+import { initSystems, type SKeys, type SystemI } from '../systems'
 
 import { LogLevel } from '../log'
 
 const createSystem = (type: string) => {
     return class implements SystemI {
-        _type = type
+        _type = type as SKeys
         run() {}
     }
 }
@@ -21,10 +21,10 @@ const hexOptions = {
 }
 
 // To check if the types are working correctly uncomment the following:
-// declare module './types' {
+// declare module '..' {
 //     interface SystemRegistry {
-//         A: A
-//         B: B
+//         A: typeof A
+//         B: typeof B
 //     }
 // }
 
@@ -58,12 +58,14 @@ describe('w/ Dependencies', () => {
         const systems = initSystems(hex)
         systems.add(A)
         systems.add(B)
+        // @ts-expect-error - no systems registered
         expect(systems.all()[0]!._type).toBe('B')
         // @ts-expect-error - no systems registered
         systems.use('B', 'A')
 
         const all = systems.all()
         expect(all).toHaveLength(2)
+        // @ts-expect-error - no systems registered
         expect(all[0]!._type).toBe('A')
     })
     it('throws when adding a cycle', () => {
@@ -90,6 +92,7 @@ describe('w/ Dependencies', () => {
         // @ts-expect-error - no systems registered
         systems.use('A', 'C')
         const all = systems.all().map((s) => s._type)
+        // @ts-expect-error - no systems registered
         expect(all).toEqual(['B', 'C', 'A'])
     })
 
@@ -99,6 +102,7 @@ describe('w/ Dependencies', () => {
         systems.add(B)
         // @ts-expect-error - no systems registered
         systems.get('B', 'A')
+        // @ts-expect-error - no systems registered
         expect(systems.all()[0]!._type).toBe('A')
     })
     it('get system & add dependency (B -> A)', () => {
@@ -107,6 +111,7 @@ describe('w/ Dependencies', () => {
         systems.add(B)
         // @ts-expect-error - no systems registered
         systems.get('A', 'B')
+        // @ts-expect-error - no systems registered
         expect(systems.all()[0]!._type).toBe('B')
         // @ts-expect-error - no systems registered
         expect(() => systems.get('A', 'C')).toMatchSnapshot()
@@ -123,8 +128,11 @@ describe('w/ Hooks', () => {
         // @ts-expect-error - no systems registered
         systems.use('A', 'B')
         systems.addHook('pre', C)
+        // @ts-expect-error - no systems registered
         expect(systems.all()[0]!._type).toBe('C')
+        // @ts-expect-error - no systems registered
         expect(systems.all()[1]!._type).toBe('B')
+        // @ts-expect-error - no systems registered
         expect(systems.all()[2]!._type).toBe('A')
     })
 
@@ -135,8 +143,11 @@ describe('w/ Hooks', () => {
         // @ts-expect-error - no systems registered
         systems.use('A', 'B')
         systems.addHook('post', C)
+        // @ts-expect-error - no systems registered
         expect(systems.all()[0]!._type).toBe('B')
+        // @ts-expect-error - no systems registered
         expect(systems.all()[1]!._type).toBe('A')
+        // @ts-expect-error - no systems registered
         expect(systems.all()[2]!._type).toBe('C')
     })
 })

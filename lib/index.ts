@@ -52,3 +52,7 @@ class Hex {
 }
 
 export { Hex }
+export type { SystemRegistry, SystemI } from './systems'
+export type { ComponentRegistry, ComponentI } from './components'
+export type { EventRegistry, EventI } from './events'
+export type { HexConfig }

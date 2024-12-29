@@ -4,11 +4,11 @@ import type { Hex } from '.'
  * Base Event Interface
  */
 export interface EventI {
-    type: EKey
+    _type: EKey
 }
 export interface EventRegistry {}
 export type EKey = keyof EventRegistry
-export type Event<K extends EKey> = K extends never ? EventI : EventRegistry[K]
+export type Event<K extends EKey> = EventRegistry[K]
 
 type Listener<T> = { listener: (event: T) => void; priority: number }
 
@@ -45,7 +45,7 @@ export function initEvents(hex: Hex) {
     const processEvents = () => {
         while (queue.length) {
             const event = queue.shift()!
-            const listeners = events[event.type]
+            const listeners = events[event._type]
             if (!listeners) continue
             // @ts-expect-error - no events registered
             for (const l of listeners) {

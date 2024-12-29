@@ -39,18 +39,22 @@ describe('Entities', () => {
 
     it('can add a component to an entity', () => {
         const id = entities.create()
+        // @ts-expect-error - no components registered
         expect(() => entities.add(id, { _type: 'A' })).not.toThrow()
+        // @ts-expect-error - no components registered
         expect(() => entities.add(id, { _type: 'A' })).toThrow()
         entities.delete(id)
     })
 
     it('can remove a component', () => {
         const id = entities.create()
+        // @ts-expect-error - no components registered
         entities.add(id, { _type: 'A' })
         // @ts-expect-error - no components registered
         expect(() => entities.remove(id, 'A')).not.toThrow()
         // @ts-expect-error - no components registered
         expect(() => entities.remove(id, 'A')).toThrow()
+        // @ts-expect-error - no components registered
         entities.add(id, [{ _type: 'A' }, { _type: 'B' }])
         // @ts-expect-error - no components registered
         expect(() => entities.remove(id, ['A', 'B'])).not.toThrow()
@@ -61,7 +65,9 @@ describe('Entities', () => {
 
     it('can get a component', () => {
         const id = entities.create()
+        // @ts-expect-error - no components registered
         entities.add(id, { _type: 'A' })
+        // @ts-expect-error - no components registered
         entities.add(id, { _type: 'B' })
         // @ts-expect-error - no components registered
         expect(entities.get(id, 'A')['_type']).toBe('A')
@@ -70,7 +76,9 @@ describe('Entities', () => {
 
     it('can get multiple components', () => {
         const id = entities.create()
+        // @ts-expect-error - no components registered
         entities.add(id, { _type: 'A' })
+        // @ts-expect-error - no components registered
         entities.add(id, { _type: 'B' })
         // @ts-expect-error - no components registered
         const components = entities.getMany(id, ['A', 'B'])
@@ -85,7 +93,9 @@ describe('Entities', () => {
     it('can get all entities with a component', () => {
         const id1 = entities.create()
         const id2 = entities.create()
+        // @ts-expect-error - no components registered
         entities.add(id1, { _type: 'A' })
+        // @ts-expect-error - no components registered
         entities.add(id2, { _type: 'A' })
         // @ts-expect-error - no components registered
         const entitiesWithA = entities.with('A')
@@ -99,8 +109,11 @@ describe('Entities', () => {
     it('can get all entities with multiple components', () => {
         const id1 = entities.create()
         const id2 = entities.create()
+        // @ts-expect-error - no components registered
         entities.add(id1, { _type: 'A' })
+        // @ts-expect-error - no components registered
         entities.add(id1, { _type: 'B' })
+        // @ts-expect-error - no components registered
         entities.add(id2, { _type: 'A' })
         // @ts-expect-error - no components registered
         const entitiesWithAB = entities.with(['A', 'B'])
@@ -113,8 +126,11 @@ describe('Entities', () => {
     it('can get entities with components and their components', () => {
         const id1 = entities.create()
         const id2 = entities.create()
+        // @ts-expect-error - no components registered
         entities.add(id1, { _type: 'A' })
+        // @ts-expect-error - no components registered
         entities.add(id1, { _type: 'B' })
+        // @ts-expect-error - no components registered
         entities.add(id2, { _type: 'A' })
         // @ts-expect-error - no components registered
         const entitiesWithAB = entities.getWith(['A', 'B'])
