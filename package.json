@@ -1,6 +1,6 @@
 {
     "name": "hex",
-    "module": "dist/index.ts",
+    "module": "dist/index.js",
     "types": "dist/index.d.ts",
     "type": "module",
     "scripts": {
@@ -10,12 +10,12 @@
         "format": "bun prettier . --write"
     },
     "devDependencies": {
-        "@types/bun": "latest",
-        "oxlint": "^0.11.0",
-        "prettier": "3.3.3",
+        "@types/bun": "^1.1.14",
+        "oxlint": "^0.15.3",
+        "prettier": "3.4.2",
         "tsup": "^8.3.5"
     },
     "peerDependencies": {
-        "typescript": "^5.0.0"
+        "typescript": "^5.7.2"
     }
 }
