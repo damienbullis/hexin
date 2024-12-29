@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { Hex } from '..'
-import type { SystemI } from '../types'
-import { initSystems } from '../systems'
+import { initSystems, type SystemI } from '../systems'
 
 import { LogLevel } from '../log'
 

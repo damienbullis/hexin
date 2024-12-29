@@ -17,25 +17,33 @@ describe('Timer', () => {
     const timer = hex.utils.timer
     hex.engine.start()
     it('should measure time by callback', () => {
-        const end = timer.start('test')
-        nextFn(tick)
-        nextFn(tick)
-        expect(write).lastCalledWith('[HEX] Timer: test took 0.03333333333333333s')
+        const ticks = 2
+        const label = 'test'
+        const end = timer.start(label)
+
+        for (let i = 0; i < ticks; i++) nextFn(tick)
         expect(hex.engine.getCount()).toBe(2)
         end()
-        expect(hex.engine.getCount()).toBe(2)
 
-        // expect(hex.engine.getCount()).toBe(1)
-        // expect(() => end()).toThrow()
-        // expect(hex.engine.getCount()).toBe(1)
-        // expect(hex.engine.getCount)
+        const last = write.mock.calls[write.mock.calls.length - 1]
+
+        // @ts-expect-error - test is a string
+        expect(JSON.parse(last).message).toBe(`[PERF] ${label}: ${ticks} ticks`)
+        expect(() => end()).toThrow()
     })
 
     it('should measure time by label', () => {
-        // timer.start('test2')
-        // expect(fn).toHaveBeenCalledTimes(3)
-        // timer.end('test2')
-        // expect(fn).toHaveBeenCalledTimes(4)
-        // expect(() => timer.end('test2')).toThrow()
+        const label = 'test2'
+        timer.start(label)
+
+        nextFn(tick)
+        expect(hex.engine.getCount()).toBe(3)
+        timer.end(label)
+
+        const last = write.mock.calls[write.mock.calls.length - 1]
+
+        // @ts-expect-error - test2 is a string
+        expect(JSON.parse(last).message).toBe(`[PERF] ${label}: 1 ticks`)
+        expect(() => timer.end(label)).toThrow()
     })
 })

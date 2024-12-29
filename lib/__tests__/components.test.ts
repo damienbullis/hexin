@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'bun:test'
+
 import { initComponents } from '../components'
+import { LogLevel } from '../log'
 import { Hex } from '..'
-import { LogLevel } from '../utils/log'
-// import type { Component } from './types'
 
 const hexOptions = {
     log_options: {

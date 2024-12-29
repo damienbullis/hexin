@@ -4,7 +4,7 @@ export interface ComponentRegistry {}
 
 // Base Interfaces
 export interface ComponentI {
-    _type: CKeys | string
+    _type: string
 }
 
 export type CKeys = keyof ComponentRegistry
