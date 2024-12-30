@@ -25,34 +25,33 @@ class Hex {
     utils: {
         config: HexConfig
         errors: HexErrors
-        timer: HexTimer
+        timer: HexTimer // Might remove this, not sure...
     }
 
     constructor(c: Partial<HexConfig> = {}) {
-        this.utils = { config: initConfig(this, c), errors: null!, timer: null! }
+        this.utils = { config: initConfig(c), errors: null!, timer: null! }
         this.log = initLog(this.utils.config.log_options)
-        this.log.debug('[HEX] Initializing...')
-        this.log.debug('[HEX] Config Initialized.')
+        this.log.debug('[HEX] Initializing')
         this.engine = initEngine(this)
-        this.log.debug('[HEX] Engine Initialized.')
+        this.log.debug('[HEX] Engine Initialized')
 
         this.utils.errors = initErrors(this)
-        this.log.debug('[HEX] Errors Initialized.')
+        this.log.debug('[HEX] Errors Initialized')
         this.utils.timer = new HexTimer(this)
-        this.log.debug('[HEX] Timer Initialized.')
+        this.log.debug('[HEX] Timer Initialized')
 
         this.systems = initSystems(this)
-        this.log.debug('[HEX] Systems Initialized.')
+        this.log.debug('[HEX] Systems Initialized')
         this.components = initComponents(this)
-        this.log.debug('[HEX] Components Initialized.')
+        this.log.debug('[HEX] Components Initialized')
         this.events = initEvents(this)
-        this.log.debug('[HEX] Events Initialized.')
-        this.log.debug('[HEX] Initialized.')
+        this.log.debug('[HEX] Events Initialized')
+        this.log.debug('[HEX] Initialized')
     }
 }
 
 export { Hex }
-export type { SystemRegistry, SystemI } from './systems'
-export type { ComponentRegistry, ComponentI } from './components'
-export type { EventRegistry, EventI } from './events'
+export type { SystemRegistry, HexSystem as SystemI } from './systems'
+export type { ComponentRegistry, HexComponent as ComponentI } from './components'
+export type { EventRegistry, HexEvent as EventI } from './events'
 export type { HexConfig }

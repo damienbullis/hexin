@@ -1,26 +1,20 @@
 import type { Hex } from '.'
 
 export function initEngine(hex: Hex) {
-    // const tickRate = hex.utils.config.tick_rate
-    const enableRendering = hex.utils.config.enable_rendering
-    const intervalFn = hex.utils.config.interval_fn
-    const maxTicks = hex.utils.config.max_ticks
-    const tickInterval = hex.utils.config.tick_interval
-    let tickTimeSinceLastUpdate = 0
-    let running = false
+    const { enable_rendering, interval_fn, max_ticks, tick_interval } = hex.utils.config
     let count = 0 // tick count
+    let lastTime = 0 // last time the render loop was called
+    let running = false
     let paused = false
 
     const start = () => {
         running = true
-        tickTimeSinceLastUpdate = 0
         count = 0
-
+        lastTime = 0
         // Start the game loop
-        intervalFn(logicLoop)
-        // logicLoop(totalTicks)
+        interval_fn(logicLoop)
 
-        if (enableRendering) {
+        if (enable_rendering) {
             // client side (browser) rendering
             requestAnimationFrame(renderLoop)
         }
@@ -34,16 +28,15 @@ export function initEngine(hex: Hex) {
         paused = !paused
     }
 
+    // This is the main game loop for server side logic
     const logicLoop = (delta: number) => {
         if (!running || paused) return
-
-        // Stop the loop
-        if (maxTicks !== undefined && count >= maxTicks) {
+        if (max_ticks !== undefined && count >= max_ticks) {
             stop()
             return
         }
 
-        // Update game logic
+        // Process systems for this tick
         for (const system of hex.systems.all()) {
             system.run(delta)
         }
@@ -52,24 +45,21 @@ export function initEngine(hex: Hex) {
         hex.events.processEvents()
 
         // Update tick counts
-        tickTimeSinceLastUpdate = 0
         count++
-
-        // Recursively call the logic loop for the next tick
-        tickTimeSinceLastUpdate += delta
-        // logicLoop(totalTicks)
-        hex.log.debug(`[TICK] ${count}`)
+        hex.log.debug(`[TICK] Count: ${count}, Delta: ${delta}`)
     }
 
-    const renderLoop = () => {
-        if (!running || !enableRendering) return
+    // This is the render loop for client side rendering
+    const renderLoop = (currentTime: number) => {
+        if (!running || !enable_rendering) return
 
-        // Perform rendering logic (interpolated for smoother visuals)
-        const interpolation = tickTimeSinceLastUpdate / tickInterval
+        const interpolation = (currentTime - lastTime) / tick_interval
+        lastTime = currentTime
+
         for (const system of hex.systems.all()) {
             if (system.render) system.render(interpolation)
         }
-        hex.log.debug(`[RENDER] ${count}`)
+        hex.log.debug(`[RENDER] Count: ${count}, Interpolation: ${interpolation}`)
 
         // Schedule the next frame
         requestAnimationFrame(renderLoop)

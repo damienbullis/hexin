@@ -3,23 +3,28 @@ import type { Hex } from '.'
 export interface ComponentRegistry {}
 
 // Base Interfaces
-export interface ComponentI {
-    _type: CKeys
+export interface HexComponent {
+    _type: CKey
 }
 
-export type CKeys = keyof ComponentRegistry
-export type Component<K extends CKeys = CKeys> = ComponentRegistry[K]
+export type CKey = keyof ComponentRegistry
+export type Component<K extends CKey = CKey> = ComponentRegistry[K]
 
 /**
  * Entities are just the index of the entity in the entities array.
  */
 type Entity = number
 
+type AssertComponent = <K extends CKey, T extends Component<K>>(
+    c: HexComponent,
+    type: K
+) => asserts c is T
+
 export function initComponents(hex: Hex) {
     const { ComponentError } = hex.utils.errors
 
     const componentEntityMap: Record<string, Entity[]> = {}
-    const entities: Array<ComponentI[]> = []
+    const entities: Array<HexComponent[]> = []
     const pool: Entity[] = []
     let nextId = 0
 
@@ -29,7 +34,7 @@ export function initComponents(hex: Hex) {
         }
     }
 
-    const addComponent = (entity: Entity, component: ComponentI) => {
+    const addComponent = (entity: Entity, component: HexComponent) => {
         const key = component._type
         const map = componentEntityMap[key]
         if (entities[entity]!.find((c) => c._type === key))
@@ -42,7 +47,7 @@ export function initComponents(hex: Hex) {
         entities[entity]!.push(component)
     }
 
-    const removeComponent = (entity: Entity, type: CKeys) => {
+    const removeComponent = (entity: Entity, type: CKey) => {
         const ent = entities[entity]
         if (!ent) throw new ComponentError('NOT_FOUND', `${entity}`)
         const map = componentEntityMap[type]
@@ -87,7 +92,7 @@ export function initComponents(hex: Hex) {
         /**
          * Add a component or components to an entity
          */
-        add(entity: Entity, components: ComponentI | Array<ComponentI>) {
+        add(entity: Entity, components: HexComponent | Array<HexComponent>) {
             if (!entities[entity]) throw new ComponentError('NOT_FOUND', `${entity}`)
             if (Array.isArray(components)) {
                 for (const component of components) {
@@ -100,7 +105,7 @@ export function initComponents(hex: Hex) {
         /**
          * Remove a component or components from an entity
          */
-        remove(entity: Entity, types: CKeys | Array<CKeys>) {
+        remove(entity: Entity, types: CKey | Array<CKey>) {
             const ent = entities[entity]
             if (!ent) throw new Error(`${entity}`)
             if (Array.isArray(types)) {
@@ -114,7 +119,7 @@ export function initComponents(hex: Hex) {
         /**
          * Get a component or components from an entity
          */
-        get<K extends CKeys>(entity: Entity, type: K): Component<K> {
+        get<K extends CKey>(entity: Entity, type: K): Component<K> {
             const ent = entities[entity]
             if (!ent) throw new ComponentError('NOT_FOUND', `${entity}`)
             const c = ent.find((c) => c._type === type)
@@ -126,13 +131,13 @@ export function initComponents(hex: Hex) {
         /**
          * Get all components from an entity
          */
-        getMany<T extends Component[]>(entity: Entity, types: CKeys[]): T {
+        getMany<T extends Component[]>(entity: Entity, types: CKey[]): T {
             return types.map((t) => this.get(entity, t)) as T
         },
         /**
          * Get all entities with a component or components
          */
-        with(types: CKeys | Array<CKeys>) {
+        with(types: CKey | Array<CKey>) {
             if (Array.isArray(types)) {
                 const sets = types.map((type) => componentEntityMap[type] || [])
                 const [first, ...rest] = sets.sort((a, b) => a.length - b.length)
@@ -145,7 +150,7 @@ export function initComponents(hex: Hex) {
         /**
          * Convenience method to get entities with components, then get those components.
          */
-        getWith<T extends Component[]>(types: CKeys | Array<CKeys>) {
+        getWith<T extends Component[]>(types: CKey | Array<CKey>) {
             return this.with(types).map((e) => {
                 if (Array.isArray(types)) {
                     return this.getMany<T>(e, types)
@@ -162,7 +167,3 @@ export function initComponents(hex: Hex) {
         },
     }
 }
-type AssertComponent = <K extends CKeys, T extends Component<K>>(
-    c: ComponentI,
-    type: K
-) => asserts c is T

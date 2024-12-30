@@ -1,28 +1,28 @@
 import type { Hex } from '.'
 
-export interface SystemI {
-    _type: SKeys
+export interface HexSystem {
+    _type: SKey
     run(delta: number): void
     render?(interpolation: number): void
 }
 export interface SystemRegistry {}
-export type SKeys = keyof SystemRegistry
-export type System<K extends SKeys = SKeys> = SystemRegistry[K]
+export type SKey = keyof SystemRegistry
+export type System<K extends SKey = SKey> = SystemRegistry[K]
 
-type AssertSystem = <K extends SKeys, T extends System<K>>(s: SystemI, type: K) => asserts s is T
+type AssertSystem = <K extends SKey, T extends System<K>>(s: HexSystem, type: K) => asserts s is T
 
 /**
  * Hex Systems Initializer
  */
 export function initSystems(hex: Hex) {
     const { SystemError } = hex.utils.errors
-    const systemMap: Record<string, SystemI> = {}
-    const graph = new Map<SystemI, SystemI[]>()
+    const systemMap: Record<string, HexSystem> = {}
+    const graph = new Map<HexSystem, HexSystem[]>()
     let isDirty = false
 
-    let systems: SystemI[] = []
-    const preSystems: SystemI[] = []
-    const postSystems: SystemI[] = []
+    let systems: HexSystem[] = []
+    const preSystems: HexSystem[] = []
+    const postSystems: HexSystem[] = []
 
     const assertSystem: AssertSystem = (s, type) => {
         if (s._type !== type) {
@@ -31,9 +31,9 @@ export function initSystems(hex: Hex) {
     }
 
     // Dependency Graph Helpers
-    const getDeps = (system: SystemI): SystemI[] => graph.get(system) || []
-    const getSystems = (): SystemI[] => Array.from(graph.keys())
-    const addDep = (system: SystemI, dep: SystemI) => {
+    const getDeps = (system: HexSystem): HexSystem[] => graph.get(system) || []
+    const getSystems = (): HexSystem[] => Array.from(graph.keys())
+    const addDep = (system: HexSystem, dep: HexSystem) => {
         if (!graph.has(system)) throw new SystemError('NOT_FOUND', system._type)
         if (!graph.has(dep)) throw new SystemError('NOT_FOUND', dep._type)
         if (graph.get(dep)?.includes(system))
@@ -42,9 +42,9 @@ export function initSystems(hex: Hex) {
         isDirty = true
     }
     const hasCycle = (
-        allSystems: SystemI[],
-        visited: Set<SystemI> = new Set(),
-        recStack: Set<SystemI> = new Set()
+        allSystems: HexSystem[],
+        visited: Set<HexSystem> = new Set(),
+        recStack: Set<HexSystem> = new Set()
     ): boolean => {
         for (const s of allSystems) {
             if (hasCycleUtil(s, visited, recStack)) {
@@ -54,9 +54,9 @@ export function initSystems(hex: Hex) {
         return false
     }
     const hasCycleUtil = (
-        system: SystemI,
-        visited: Set<SystemI>,
-        recStack: Set<SystemI>
+        system: HexSystem,
+        visited: Set<HexSystem>,
+        recStack: Set<HexSystem>
     ): boolean => {
         if (!visited.has(system)) {
             visited.add(system)
@@ -74,14 +74,11 @@ export function initSystems(hex: Hex) {
         return false
     }
 
-    /**
-     * Topological sort of systems, based on dependencies
-     */
-    const topSort = (): SystemI[] => {
+    const topSort = (): HexSystem[] => {
         if (!isDirty) return systems
 
         // Initialize dependency count map
-        const dependencyCountMap = new Map<SystemI, number>()
+        const dependencyCountMap = new Map<HexSystem, number>()
         for (const system of getSystems()) {
             dependencyCountMap.set(system, 0)
             for (const dependency of getDeps(system)) {
@@ -90,7 +87,7 @@ export function initSystems(hex: Hex) {
         }
 
         // Collect systems with no dependencies
-        const queue: SystemI[] = []
+        const queue: HexSystem[] = []
         for (const [system, dependencyCount] of dependencyCountMap) {
             if (dependencyCount === 0) {
                 queue.push(system)
@@ -98,7 +95,7 @@ export function initSystems(hex: Hex) {
         }
 
         // Perform topological sort
-        const sortedSystems: SystemI[] = []
+        const sortedSystems: HexSystem[] = []
         while (queue.length) {
             const system = queue.shift()!
             sortedSystems.push(system)
@@ -125,18 +122,7 @@ export function initSystems(hex: Hex) {
     }
 
     return {
-        /**
-         * Add a system to the engine
-         * @param system The system class to add.
-         * @example
-         * ```ts
-         * class SomeSystem extends SystemI {
-         *   // ...
-         * }
-         * engine.systems.add(SomeSystem) // Add the system class, not an instance.
-         * ```
-         */
-        add(system: { new (e: Hex): SystemI }) {
+        add(system: { new (e: Hex): HexSystem }) {
             const s = new system(hex)
             if (systemMap[s._type]) throw new SystemError('EXISTS', s._type)
             systemMap[s._type] = s
@@ -145,12 +131,8 @@ export function initSystems(hex: Hex) {
                 isDirty = true
             }
         },
-        /**
-         * Get a system from the engine
-         * @param type The type of system
-         * @param dep Optional add a dependency to the system. (Typically used by systems, during initialization)
-         */
-        get<K extends SKeys>(type: K, dep?: SKeys): System<K> {
+
+        get<K extends SKey>(type: K, dep?: SKey): System<K> {
             const system = systemMap[type]
             if (!system) throw new SystemError('NOT_FOUND', type)
             if (dep) {
@@ -161,28 +143,20 @@ export function initSystems(hex: Hex) {
             assertSystem(system, type)
             return system
         },
-        /**
-         * Add a dependency between two systems
-         * @param system The system to add dependency to
-         * @param dep The system to depend on
-         */
-        use(system: SKeys, dep: SKeys): void {
+
+        use(system: SKey, dep: SKey): void {
             const s = systemMap[system]
             const d = systemMap[dep]
             if (!s) throw new SystemError('NOT_FOUND', system)
             if (!d) throw new SystemError('NOT_FOUND', dep)
             addDep(s, d)
         },
-        /**
-         * Get all systems
-         */
+
         all() {
             return topSort()
         },
-        /**
-         * Add a system to the pre or post hook
-         */
-        addHook(type: 'pre' | 'post', system: { new (e: Hex): SystemI }) {
+
+        addHook(type: 'pre' | 'post', system: { new (e: Hex): HexSystem }) {
             const s = new system(hex)
             if (type === 'post') postSystems.push(s)
             else preSystems.push(s)

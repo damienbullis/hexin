@@ -1,4 +1,3 @@
-import type { Hex } from '.'
 import { type LoggerOptions, LogLevel } from './log'
 
 export type HexConfig = {
@@ -25,7 +24,7 @@ const DEFAULT: HexConfig = {
     max_ticks: undefined,
 }
 
-export function initConfig(hex: Hex, c: Partial<HexConfig>): HexConfig {
+export function initConfig(c: Partial<HexConfig>): HexConfig {
     return {
         ...DEFAULT,
         ...c,
