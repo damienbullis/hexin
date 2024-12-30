@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import { Hex } from '..'
-import { initSystems, type SKey, type HexSystem } from '../systems'
+import { initSystems, type SystemRegistry, type HexSystem } from '../systems'
 
 import { LogLevel } from '../log'
 
 const createSystem = (type: string) => {
     return class implements HexSystem {
-        _type = type as SKey
+        _type = type as keyof SystemRegistry
         run() {}
     }
 }
