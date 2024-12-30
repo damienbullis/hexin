@@ -1,13 +1,15 @@
 import type { Hex } from '.'
 
+export interface SystemRegistry {}
+
 export interface HexSystem {
     _type: SKey
     run(delta: number): void
     render?(interpolation: number): void
 }
-export interface SystemRegistry {}
-export type SKey = keyof SystemRegistry
-export type System<K extends SKey = SKey> = SystemRegistry[K]
+
+type SKey = keyof SystemRegistry
+type System<K extends SKey = SKey> = SystemRegistry[K]
 
 type AssertSystem = <K extends SKey, T extends System<K>>(s: HexSystem, type: K) => asserts s is T
 

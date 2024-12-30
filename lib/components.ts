@@ -2,13 +2,12 @@ import type { Hex } from '.'
 
 export interface ComponentRegistry {}
 
-// Base Interfaces
 export interface HexComponent {
     _type: CKey
 }
 
-export type CKey = keyof ComponentRegistry
-export type Component<K extends CKey = CKey> = ComponentRegistry[K]
+type CKey = keyof ComponentRegistry
+type Component<K extends CKey = CKey> = ComponentRegistry[K]
 
 /**
  * Entities are just the index of the entity in the entities array.

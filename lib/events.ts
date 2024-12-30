@@ -1,14 +1,13 @@
 import type { Hex } from '.'
 
-/**
- * Base Event Interface
- */
+export interface EventRegistry {}
+
 export interface HexEvent {
     _type: EKey
 }
-export interface EventRegistry {}
-export type EKey = keyof EventRegistry
-export type Event<K extends EKey> = EventRegistry[K]
+
+type EKey = keyof EventRegistry
+type Event<K extends EKey> = EventRegistry[K]
 
 type Listener<T> = { listener: (event: T) => void; priority: number }
 
