@@ -50,8 +50,8 @@ class Hex {
     }
 }
 
-export { Hex }
-export type { SystemRegistry, HexSystem as SystemI } from './systems'
-export type { ComponentRegistry, HexComponent as ComponentI } from './components'
-export type { EventRegistry, HexEvent as EventI } from './events'
-export type { HexConfig }
+export type { ComponentRegistry, HexComponent } from './components'
+export type { SystemRegistry, HexSystem } from './systems'
+export type { EventRegistry, HexEvent } from './events'
+
+export { Hex, type HexConfig }
