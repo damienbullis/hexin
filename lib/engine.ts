@@ -48,7 +48,7 @@ export function initEngine(hex: Hex) {
 
         // Update tick counts
         count++
-        // hex.log.debug(`[TICK] Count: ${count}, Delta: ${delta}`)
+        hex.log.debug(`[LOGIC] Count: ${count}, Delta: ${delta}`)
     }
 
     // Render loop for client side rendering (currentTime is in milliseconds from requestAnimationFrame)
@@ -62,7 +62,7 @@ export function initEngine(hex: Hex) {
         for (const system of hex.systems.all()) {
             if (system.render) system.render(interpolation)
         }
-        // hex.log.debug(`[RENDER] Count: ${count}, Interpolation: ${interpolation}`)
+        hex.log.debug(`[RENDER] Count: ${count}, Interpolation: ${interpolation}`)
 
         // Schedule the next frame
         requestAnimationFrame(renderLoop)

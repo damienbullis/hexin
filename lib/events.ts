@@ -47,7 +47,7 @@ export function initEvents(hex: Hex) {
 
     const processEvents = () => {
         if (!queue.length) return
-        hex.log.debug(`[EVENTS] Processing...`)
+        hex.log.debug(`[EVENTS] Processing...`, { queue })
         while (queue.length) {
             const event = queue.shift()!
             const listeners = events[event._type]
@@ -55,8 +55,8 @@ export function initEvents(hex: Hex) {
             // @ts-expect-error - no events registered
             for (const l of listeners) {
                 l.listener(event)
-                hex.log.debug(`[EVENTS] ${event._type} Processed`)
             }
+            hex.log.debug(`[EVENTS] ${event._type} Processed`, { event })
         }
         hex.log.debug(`[EVENTS] Finished processing for tick ${hex.engine.count()}`)
     }
