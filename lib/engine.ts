@@ -72,7 +72,11 @@ export function initEngine(hex: Hex) {
         /**
          * The current tick count of the game loop
          */
-        getCount: () => count,
+        count: () => count,
+        /**
+         * Check if the game loop is running
+         */
+        isPaused: () => paused,
         /**
          * Start the game loop
          */

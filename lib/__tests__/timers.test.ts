@@ -22,7 +22,7 @@ describe('Timer', () => {
         const end = timer.start(label)
 
         for (let i = 0; i < ticks; i++) nextFn(tick)
-        expect(hex.engine.getCount()).toBe(2)
+        expect(hex.engine.count()).toBe(2)
         end()
 
         const last = write.mock.calls[write.mock.calls.length - 1]
@@ -37,7 +37,7 @@ describe('Timer', () => {
         timer.start(label)
 
         nextFn(tick)
-        expect(hex.engine.getCount()).toBe(3)
+        expect(hex.engine.count()).toBe(3)
         timer.end(label)
 
         const last = write.mock.calls[write.mock.calls.length - 1]

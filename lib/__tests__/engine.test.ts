@@ -32,30 +32,33 @@ describe('Engine', () => {
 
     it('should start & stop', () => {
         hex.engine.start()
-        expect(hex.engine.getCount()).toBe(0)
+        expect(hex.engine.count()).toBe(0)
         nextFn(tick)
-        expect(hex.engine.getCount()).toBe(1)
+        expect(hex.engine.count()).toBe(1)
         hex.engine.stop()
         nextFn(tick)
-        expect(hex.engine.getCount()).toBe(1)
+        expect(hex.engine.count()).toBe(1)
         hex.engine.start()
-        expect(hex.engine.getCount()).toBe(0)
+        expect(hex.engine.count()).toBe(0)
     })
 
     it('should tick', () => {
         nextFn(tick)
         nextFn(tick)
-        expect(hex.engine.getCount()).toBe(2)
+        expect(hex.engine.count()).toBe(2)
     })
 
     it('should pause & unpause', () => {
+        expect(hex.engine.isPaused()).toBeFalse()
         nextFn(tick)
         hex.engine.pause()
+        expect(hex.engine.isPaused()).toBeTrue()
         nextFn(tick)
-        expect(hex.engine.getCount()).toBe(1)
+        expect(hex.engine.count()).toBe(1)
         hex.engine.pause() // unpause
+        expect(hex.engine.isPaused()).toBeFalse()
         nextFn(tick)
-        expect(hex.engine.getCount()).toBe(2)
+        expect(hex.engine.count()).toBe(2)
     })
 
     it('should run until max ticks is reached', () => {
@@ -63,8 +66,8 @@ describe('Engine', () => {
         for (let i = 0; i < total; i++) {
             nextFn(tick)
         }
-        expect(hex.engine.getCount()).toBe(total)
+        expect(hex.engine.count()).toBe(total)
         nextFn(tick)
-        expect(hex.engine.getCount()).toBe(total)
+        expect(hex.engine.count()).toBe(total)
     })
 })
