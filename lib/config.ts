@@ -1,4 +1,4 @@
-import { type LoggerOptions, LogLevel } from './log'
+import { type LoggerOptions } from './log'
 
 export type HexConfig = {
     log_options: LoggerOptions
@@ -12,7 +12,7 @@ export type HexConfig = {
 
 const DEFAULT: HexConfig = {
     log_options: {
-        level: LogLevel.DEBUG,
+        level: 'DEBUG',
         outputs: [{ output: { write: console.log } }],
     },
     rng_seed: 0,

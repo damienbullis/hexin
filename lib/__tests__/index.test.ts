@@ -1,18 +1,16 @@
 import { describe, it, expect } from 'bun:test'
 import { Hex } from '..'
-import { LogLevel } from '../log'
 
-const hexOptions = {
-    log_options: {
-        level: LogLevel.DEBUG,
-        outputs: [{ output: { write() {} } }],
-    },
-}
 describe('Core Engine', () => {
     it('initializing with no config', () => {
-        const hex = new Hex(hexOptions)
+        const hex = new Hex({
+            log_options: {
+                level: 'DEBUG',
+                outputs: [{ output: { write() {} } }],
+            },
+        })
         expect(hex).toBeDefined()
-        expect(hex.utils.config.log_options.level).toBe(LogLevel.DEBUG)
+        expect(hex.utils.config.log_options.level).toBe('DEBUG')
     })
     // TODO: Add more tests
 })

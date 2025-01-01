@@ -1,14 +1,6 @@
 import { describe, expect, it, jest } from 'bun:test'
 import { initEvents } from '../events'
 import { Hex } from '..'
-import { LogLevel } from '../log'
-
-const hexOptions = {
-    log_options: {
-        level: LogLevel.DEBUG,
-        outputs: [{ output: { write() {} } }],
-    },
-}
 
 // // To check if the types are working correctly uncomment the following:
 // declare module '../events' {
@@ -20,7 +12,12 @@ const hexOptions = {
 // If the above is uncommented, you should see an lsp error on all @ts-expect-error lines
 
 describe('Events', () => {
-    const hex = new Hex(hexOptions)
+    const hex = new Hex({
+        log_options: {
+            level: 'DEBUG',
+            outputs: [{ output: { write() {} } }],
+        },
+    })
     const events = initEvents(hex)
 
     it('can register and emit an event', () => {

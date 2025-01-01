@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
 import { Hex } from '..'
-import { LogLevel } from '../log'
 
 describe('Engine', () => {
     let hex: Hex
@@ -10,7 +9,7 @@ describe('Engine', () => {
         const h = new Hex({
             log_options: {
                 outputs: [{ output: { write: () => {} } }],
-                level: LogLevel.DEBUG,
+                level: 'DEBUG',
             },
             interval_fn: (next) => {
                 nextFn = next

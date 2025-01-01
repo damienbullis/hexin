@@ -2,8 +2,6 @@ import { describe, expect, it } from 'bun:test'
 import { Hex } from '..'
 import { initSystems, type SystemRegistry, type HexSystem } from '../systems'
 
-import { LogLevel } from '../log'
-
 const createSystem = (type: string) => {
     return class implements HexSystem {
         _type = type as keyof SystemRegistry
@@ -13,12 +11,6 @@ const createSystem = (type: string) => {
 const A = createSystem('A')
 const B = createSystem('B')
 const C = createSystem('C')
-const hexOptions = {
-    log_options: {
-        level: LogLevel.DEBUG,
-        outputs: [{ output: { write() {} } }],
-    },
-}
 
 // To check if the types are working correctly uncomment the following:
 // declare module '..' {
@@ -30,8 +22,16 @@ const hexOptions = {
 
 // After uncommenting the above,
 // you should see each @ts-expect-error show an lsp error
+
 describe('Systems', () => {
-    const systems = initSystems(new Hex(hexOptions))
+    const hex = new Hex({
+        log_options: {
+            level: 'DEBUG',
+            outputs: [{ output: { write() {} } }],
+        },
+    })
+
+    const systems = initSystems(hex)
     it('can add a system', () => {
         systems.add(A)
         expect(systems.all()).toHaveLength(1)
@@ -53,7 +53,12 @@ describe('Systems', () => {
 })
 
 describe('w/ Dependencies', () => {
-    const hex = new Hex(hexOptions)
+    const hex = new Hex({
+        log_options: {
+            level: 'DEBUG',
+            outputs: [{ output: { write() {} } }],
+        },
+    })
     it('add a dependency to a system', () => {
         const systems = initSystems(hex)
         systems.add(A)
@@ -119,8 +124,12 @@ describe('w/ Dependencies', () => {
 })
 
 describe('w/ Hooks', () => {
-    const hex = new Hex(hexOptions)
-
+    const hex = new Hex({
+        log_options: {
+            level: 'DEBUG',
+            outputs: [{ output: { write() {} } }],
+        },
+    })
     it('can add systems to pre hook', () => {
         const systems = initSystems(hex)
         systems.add(A)

@@ -1,6 +1,5 @@
 import { describe, expect, it, jest } from 'bun:test'
 
-import { LogLevel } from '../log'
 import { Hex } from '..'
 
 describe('Timer', () => {
@@ -9,7 +8,7 @@ describe('Timer', () => {
     const write = jest.fn((s) => s)
     const hex = new Hex({
         log_options: {
-            level: LogLevel.DEBUG,
+            level: 'DEBUG',
             outputs: [{ output: { write } }],
         },
         interval_fn: (next) => (nextFn = next),

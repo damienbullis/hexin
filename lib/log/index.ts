@@ -26,16 +26,11 @@ type LogOutput = {
     formatter?: LogFormatter // Function to format log messages
 }
 
+type LogLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR'
+
 export interface LoggerOptions {
     level: LogLevel // Minimum log level to output
     outputs: LogOutput[]
-}
-
-export enum LogLevel {
-    DEBUG = 'debug',
-    INFO = 'info',
-    WARN = 'warn',
-    ERROR = 'error',
 }
 
 class Log implements Logger {
@@ -62,19 +57,19 @@ class Log implements Logger {
     }
 
     debug(message: string, meta?: Record<string, any>): void {
-        this.log(LogLevel.DEBUG, message, meta)
+        this.log('DEBUG', message, meta)
     }
 
     info(message: string, meta?: Record<string, any>): void {
-        this.log(LogLevel.INFO, message, meta)
+        this.log('INFO', message, meta)
     }
 
     warn(message: string, meta?: Record<string, any>): void {
-        this.log(LogLevel.WARN, message, meta)
+        this.log('WARN', message, meta)
     }
 
     error(message: string, meta?: Record<string, any>): void {
-        this.log(LogLevel.ERROR, message, meta)
+        this.log('ERROR', message, meta)
     }
 
     configure(options: LoggerOptions): void {
@@ -82,7 +77,7 @@ class Log implements Logger {
     }
 
     private shouldLog(level: LogLevel): boolean {
-        const levels = [LogLevel.DEBUG, LogLevel.INFO, LogLevel.WARN, LogLevel.ERROR]
+        const levels = ['DEBUG', 'INFO', 'WARN', 'ERROR']
         return levels.indexOf(level) >= levels.indexOf(this.options.level)
     }
 }
